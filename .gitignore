@@ -7,12 +7,31 @@ wheels/
 logs
 *.egg-info
 .env
+.vite
+
+# firebase json files
+google-services.json
+walthvault-firebase-adminsdk-fbsvc-c64427df38.json
+
+# graphify 
+graphify-out/manifest.json    
+graphify-out/cost.json       
+graphify-out/cache/
 
 # Virtual environments
 .venv
+venv
+env
 node_modules
 
 # Secrets and Credentials
 credentials.json
 token.pickle
 .env
+
+# Data
+data
+
+# models
+model_m3.pt
+bert_classifier.pt

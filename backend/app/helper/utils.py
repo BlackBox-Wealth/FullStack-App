@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from typing import Any
 from app.services.encryption import EncryptionHelper
@@ -7,8 +8,8 @@ from app.core.config import settings
 
 log = Logifyx(
     name="wealthvault",
-    color=True,  # Ensure colored output for console logs
-)   
+    color=True,
+)
 
 load_dotenv()
 encryption_helper = EncryptionHelper(settings.DATA_ENCRYPTION_KEY)
@@ -18,22 +19,23 @@ NEVER_ENCRYPT_FIELDS = {
     "hashed_account_number", "created_at", "updated_at", "completed_at",
     "approved_at", "resolved_at", "read_at",
     # Operational keys required for filtering, relations, counters and pipelines.
+    # We keep these as plaintext so MongoDB indexes and queries still work.
     "user_id", "account_id", "from_account_id", "to_account_id", "to_user_id",
     "payment_id", "transaction_id", "loan_id", "target_user",
-    "role", "kyc_status", "status", "transaction_type", "category", "type",
-    "currency", "is_active", "is_external", "read", "verified", "otp",
-    "amount", "balance", "risk_score", "interest_rate", "emi", "tenure_months",
+    "category", "transaction_type", "type", "currency",
 }
 
 LOG_EXEMPT_FIELDS = {
     "performed_by", "action", "reason", "resolved_by", "approved_by", "rejected_by",
 }
 
-# Encrypt these fields even when they are numeric.
+# Encrypt these fields even when they are numeric or critical status strings.
 FORCE_ENCRYPT_FIELDS = {
     "target_amount", "current_amount", "progress_pct", "step_up_pct",
     "installments_count", "current_value", "total_invested", "profit_loss",
     "profit_loss_pct", "buy_price", "quantity",
+    "amount", "balance", "risk_score", "interest_rate", "emi", "tenure_months",
+    "role", "kyc_status", "status", "is_active", "is_external", "read", "verified", "otp",
 }
 
 FLOAT_FIELDS = {

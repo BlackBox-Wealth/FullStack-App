@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminAPI } from '../api';
+import PageLoader from '../components/animation/PageLoader';
 
 const AdminLoans: React.FC = () => {
   const [loans, setLoans] = useState<any[]>([]);
@@ -26,7 +27,7 @@ const AdminLoans: React.FC = () => {
     loadLoans();
   };
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading loans" />;
 
   return (
     <div>

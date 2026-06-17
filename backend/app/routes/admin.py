@@ -1,12 +1,13 @@
 """Admin routes - User mgmt, KYC, Loans, Fraud, Analytics, Audit."""
 from datetime import datetime, timedelta
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, HTTPException, Depends, Query, Body
 from bson import ObjectId
 from app.core.database import get_database
 from app.core.security import require_role
 from app.core.kafka_service import kafka_service
 from app.helper.utils import decrypt_user_data, encrypt_update_fields
+from app.services.grpc_client import ml_client
 from logifyx import Logifyx
 
 log = Logifyx(
@@ -106,51 +107,106 @@ async def activate_user(user_id: str, current_user: dict = Depends(require_role(
 async def get_pending_kyc(current_user: dict = Depends(require_role("super_admin", "relationship_manager", "employee"))):
     log.info(f"KYC pending list requested: by={current_user['email']}")
     db = get_database()
-    cursor = db.users.find({"kyc_status": "pending"}, {"password_hash": 0})
-    users = await cursor.to_list(100)
-    for u in users:
-        decrypted_user = decrypt_user_data(u)  # Decrypt fields if needed
-        u.clear()  # Clear original dict
-        u.update(decrypted_user)  # Update original dict with decrypted values
-        u["id"] = str(u["_id"])
-        del u["_id"]
-    log.info(f"Found {len(users)} pending KYC verifications")
-    return users
+    # Find users whose documents are in 'pending_review' status
+    cursor = db.kyc_documents.find({"status": "pending_review"})
+    pending_docs = await cursor.to_list(100)
+    
+    for doc in pending_docs:
+        doc["id"] = str(doc["_id"])
+        del doc["_id"]
+    
+    return pending_docs
 
+@router.get("/kyc/escalated")
+async def get_escalated_kyc(current_user: dict = Depends(require_role("super_admin", "relationship_manager"))):
+    log.info(f"KYC escalated list requested: by={current_user['email']}")
+    db = get_database()
+    cursor = db.kyc_documents.find({"status": "escalated"})
+    escalated_docs = await cursor.to_list(100)
+    
+    for doc in escalated_docs:
+        doc["id"] = str(doc["_id"])
+        del doc["_id"]
+    
+    return escalated_docs
 
-@router.put("/kyc/{user_id}/verify")
-async def verify_kyc(
-    user_id: str, status: str,
+@router.put("/kyc/{user_id}/action")
+async def kyc_action(
+    user_id: str, 
+    action: str = Body(..., embed=True),
+    comments: Optional[str] = Body(None, embed=True),
     current_user: dict = Depends(require_role("super_admin", "relationship_manager", "employee"))
 ):
-    log.info(f"KYC verification: user={user_id}, status={status}, by={current_user['email']}")
+    """
+    Handle KYC actions: accept, reject, request_reupload, escalate.
+    """
+    log.info(f"KYC action: user={user_id}, action={action}, by={current_user['email']}")
     db = get_database()
-    if status not in ["verified", "rejected"]:
-        log.error(f"Invalid KYC status: {status}")
-        raise HTTPException(status_code=400, detail="Status must be 'verified' or 'rejected'")
+    
+    valid_actions = ["accept", "reject", "request_reupload", "escalate"]
+    if action not in valid_actions:
+        raise HTTPException(status_code=400, detail=f"Invalid action. Must be {valid_actions}")
 
-    update_fields = encrypt_update_fields({"kyc_status": status, "updated_at": datetime.utcnow()})
-    result = await db.users.update_one({"_id": ObjectId(user_id)}, {"$set": update_fields})
-    if result.modified_count == 0:
-        log.warning(f"KYC update failed: user={user_id} not found")
-        raise HTTPException(status_code=404, detail="User not found")
+    # Role checks
+    if action == "escalate" and current_user["role"] not in ["employee", "super_admin"]:
+        raise HTTPException(status_code=403, detail="Only employees can escalate to manager")
+    
+    if action in ["accept", "reject", "request_reupload"] and \
+       current_user["role"] == "employee" and \
+       await db.kyc_documents.find_one({"user_id": user_id, "status": "escalated"}):
+        raise HTTPException(status_code=403, detail="Document is escalated. Only managers can perform this action.")
 
+    # Map action to status
+    status_map = {
+        "accept": "verified",
+        "reject": "rejected",
+        "request_reupload": "reupload_requested",
+        "escalate": "escalated"
+    }
+    
+    new_status = status_map[action]
+    
+    update_data = {
+        "status": new_status,
+        "comments": comments,
+        "reviewed_by": current_user["email"],
+        "updated_at": datetime.utcnow()
+    }
+    
+    # Update kyc_documents
+    await db.kyc_documents.update_one({"user_id": user_id}, {"$set": update_data})
+    
+    # Update user status for all major status changes
+    await db.users.update_one(
+        {"_id": ObjectId(user_id)}, 
+        {"$set": {"kyc_status": new_status, "updated_at": datetime.utcnow()}}
+    )
+
+    # Audit log
     await db.audit_logs.insert_one({
         "performed_by": current_user["email"],
-        "action": "kyc_verification",
+        "action": f"kyc_{action}",
         "target_user": user_id,
-        "status": status,
+        "status": new_status,
+        "comments": comments,
         "created_at": datetime.utcnow(),
     })
 
+    # Notify user via Kafka
+    message_map = {
+        "verified": "Your KYC has been verified successfully.",
+        "rejected": "Your KYC has been rejected.",
+        "reupload_requested": f"Please re-upload your KYC documents. Reason: {comments}",
+        "escalated": "Your KYC is being reviewed by a senior manager."
+    }
+    
     await kafka_service.publish("notifications.send", {
         "user_id": user_id,
         "type": "kyc_update",
-        "message": f"Your KYC has been {status}",
+        "message": message_map.get(new_status, "KYC status updated"),
     })
 
-    log.info(f"KYC updated: user={user_id} → {status}, notification sent")
-    return {"message": f"KYC status updated to {status}"}
+    return {"message": f"KYC {action} successful", "new_status": new_status}
 
 
 # ─── Loan Management ─────────────────────────
@@ -241,7 +297,45 @@ async def resolve_fraud_alert(
     return {"message": f"Fraud alert resolved as {resolution}"}
 
 
-# ─── Analytics ─────────────────────────
+@router.get("/insider-threat-check")
+async def insider_threat_check(current_user: dict = Depends(require_role("super_admin"))):
+    """Scan for potential collusion/insider fraud using GraphSAGE model."""
+    log.warning(f"Insider threat scan initiated by {current_user['email']}")
+    db = get_database()
+    
+    # In a real scenario, we'd build a graph from employees and customers
+    # For now, we'll pull some high-risk interactions to simulate
+    # e.g., transactions where employee_id and customer_id are related or have unusual ratios
+    
+    # Placeholder: Process some records through the model
+    # Features as per doc: txn_amount, is_off_hours, override_count_this_month, 
+    # personal_relationship_flag, employee_txn_amount_ratio
+    
+    # Scan known employee-account node pairs via GraphSAGE gRPC
+    scan_pairs = [
+        ("ACC001", "EMP001", 500000, 5),
+        ("ACC002", "EMP002", 250000, 3),
+        ("ACC003", "EMP003", 150000, 2),
+    ]
+    alerts = []
+    for user_id, emp_id, amount, txn_count in scan_pairs:
+        result = ml_client.detect_insider_threat(user_id, emp_id, float(amount), txn_count)
+        log.info(f"Insider threat [{user_id} ↔ {emp_id}]: {result}")
+        if result.get("is_insider_threat"):
+            alerts.append({
+                "user_id": user_id,
+                "employee_id": emp_id,
+                "threat_score": result["threat_score"],
+                "message": f"Collusion risk detected between {user_id} and {emp_id} (score={result['threat_score']:.3f})"
+            })
+
+    return {
+        "scan_timestamp": datetime.utcnow(),
+        "status": "completed",
+        "threats_detected": len(alerts),
+        "alerts": alerts,
+        "message": "GraphSAGE relationship analysis complete."
+    }
 @router.get("/analytics")
 async def get_analytics(current_user: dict = Depends(require_role("super_admin", "relationship_manager"))):
     log.info(f"Analytics dashboard requested: by={current_user['email']}")
@@ -295,3 +389,39 @@ async def get_audit_logs(current_user: dict = Depends(require_role("super_admin"
         del l["_id"]
     log.info(f"Returned {len(logs)} audit log entries")
     return logs
+
+
+# ─── System Performance ─────────────────────────
+@router.get("/performance")
+async def get_performance_metrics(
+    limit: int = Query(50, ge=1, le=200),
+    offset: int = Query(0, ge=0),
+    current_user: dict = Depends(require_role("super_admin"))
+):
+    """Retrieve system performance metrics with pagination support."""
+    from app.core.redis_client import get_redis
+    import json
+    
+    redis = get_redis()
+    if not redis:
+        return {"metrics": [], "total": 0}
+        
+    key = "system_performance_zset"
+    
+    # Get total count for pagination info
+    total = await redis.zcard(key)
+    
+    # Get the specific range [offset, offset + limit - 1]
+    metrics_raw = await redis.zrevrange(key, offset, offset + limit - 1)
+    metrics = [json.loads(m) for m in metrics_raw]
+    
+    for i, m in enumerate(metrics):
+        if "id" not in m:
+            m["id"] = f"perf_{offset + i}"
+            
+    return {
+        "metrics": metrics,
+        "total": total,
+        "page_size": limit,
+        "offset": offset
+    }

@@ -1,0 +1,427 @@
+{
+  "SIPs": {
+    "pageTitle": "Systematic Investment Plans",
+    "items": [
+      {
+        "title": "SIP (Systematic Investment Plan)",
+        "description": "An investment method where you invest a fixed amount at regular intervals (weekly, monthly, quarterly) to build wealth gradually and reduce market timing risk."
+      },
+      {
+        "title": "Goal Tracking",
+        "description": "Monitor your SIP progress towards specific financial goals with automatic performance calculations and projected completion dates."
+      },
+      {
+        "title": "Rupee Cost Averaging",
+        "description": "A strategy where regular fixed investments buy more units when prices are low and fewer when prices are high, potentially lowering your average cost per unit."
+      }
+    ]
+  },
+  "Goals": {
+    "pageTitle": "Financial Goals",
+    "items": [
+      {
+        "title": "Financial Goals",
+        "description": "Specific, measurable targets like retirement, education, house purchase, or vacation with timelines and funding strategies."
+      },
+      {
+        "title": "Goal Priority",
+        "description": "Categorize and rank your financial goals by importance and urgency to allocate resources more effectively."
+      },
+      {
+        "title": "Goal Progress",
+        "description": "Real-time tracking of your savings and investments against each goal with projections on whether you'll meet your targets on time."
+      }
+    ]
+  },
+  "Dashboard": {
+    "pageTitle": "Dashboard",
+    "items": [
+      {
+        "title": "Net Worth Summary",
+        "description": "A comprehensive overview of your total wealth calculated from all accounts, investments, and physical assets minus any liabilities."
+      },
+      {
+        "title": "Quick Actions",
+        "description": "Shortcuts to frequently used features like adding accounts, creating goals, and accessing recent transactions for faster navigation."
+      },
+      {
+        "title": "Financial Insights",
+        "description": "AI-powered recommendations and alerts based on your spending patterns, investment performance, and financial health metrics."
+      }
+    ]
+  },
+  "CreditScore": {
+    "pageTitle": "Credit Score",
+    "items": [
+      {
+        "title": "Credit Score Range",
+        "description": "A score between 300-900 that indicates your creditworthiness based on payment history, credit utilization, and other factors used by lenders."
+      },
+      {
+        "title": "CIBIL/Bureau Score",
+        "description": "Credit information bureau score that tracks your loan and credit card repayment history, defaults, and credit inquiries."
+      },
+      {
+        "title": "Score Factors",
+        "description": "Key components affecting your credit score including payment history (35%), credit utilization (30%), length of credit history (15%), and credit mix (20%)."
+      }
+    ]
+  },
+  "TaxHelper": {
+    "pageTitle": "Tax Helper",
+    "items": [
+      {
+        "title": "Tax Deductions",
+        "description": "Eligible expenses and investments that reduce your taxable income such as 80C investments, HRA, medical expenses, and interest on home loans."
+      },
+      {
+        "title": "Tax Liability",
+        "description": "The total amount of income tax you owe to the government based on your annual income, deductions, and applicable tax slabs."
+      },
+      {
+        "title": "ITR Filing",
+        "description": "Income Tax Return filing status and guidance for reporting your annual income, savings, and tax obligations to the income tax department."
+      }
+    ]
+  },
+  "Recommendations": {
+    "pageTitle": "AI Recommendations",
+    "items": [
+      {
+        "title": "Personalized Recommendations",
+        "description": "AI-generated investment, savings, and financial planning suggestions based on your profile, goals, risk tolerance, and spending patterns."
+      },
+      {
+        "title": "Risk Assessment",
+        "description": "Evaluation of your financial risk profile considering income stability, goals timeline, and existing portfolio to suggest appropriate investment strategies."
+      },
+      {
+        "title": "Confidence Score",
+        "description": "A measure indicating how relevant and reliable each recommendation is based on data completeness, market conditions, and historical accuracy."
+      }
+    ]
+  },
+  "WhatIf": {
+    "pageTitle": "AI Wealth Simulator",
+    "items": [
+      {
+        "title": "Scenario Simulation",
+        "description": "Test different financial decisions like changing investment amounts, retirement age, or spending patterns to see projected outcomes."
+      },
+      {
+        "title": "Market Conditions",
+        "description": "Adjust assumptions about inflation rates, market returns, and economic factors to understand how various scenarios affect your wealth."
+      },
+      {
+        "title": "Projection Timeline",
+        "description": "Year-by-year visualization of how your net worth, investments, and savings will grow under different assumptions and decisions."
+      }
+    ]
+  },
+  "AccountAggregator": {
+    "pageTitle": "Account Aggregator",
+    "items": [
+      {
+        "title": "Account Aggregator (AA)",
+        "description": "A secure consent-based system that fetches your financial data from multiple banks and institutions to provide a unified view of your finances."
+      },
+      {
+        "title": "Consent Management",
+        "description": "Control what data is shared, with whom, and for how long through explicit consent revocation, ensuring your privacy and data security."
+      },
+      {
+        "title": "Linked Institutions",
+        "description": "Banks and financial institutions you've authorized through Account Aggregator to share your transaction and account information with WealthVault."
+      }
+    ]
+  },
+  "Family": {
+    "pageTitle": "Family",
+    "items": [
+      {
+        "title": "Family Members",
+        "description": "Add and manage profiles of family members with role-based permissions to share financial information and collaborate on financial planning."
+      },
+      {
+        "title": "Shared Goals",
+        "description": "Create and track collective family financial goals like vacation, education fund, or emergency corpus with combined savings tracking."
+      },
+      {
+        "title": "Family Dashboard",
+        "description": "Unified view of family finances with aggregated assets, liabilities, and wealth distribution across family members with privacy controls."
+      }
+    ]
+  },
+  "Settings": {
+    "pageTitle": "Settings",
+    "items": [
+      {
+        "title": "Profile Management",
+        "description": "Update personal information, contact details, notification preferences, and profile picture for your WealthVault account."
+      },
+      {
+        "title": "Security Settings",
+        "description": "Configure two-factor authentication, password management, security questions, and device trust settings to protect your account."
+      },
+      {
+        "title": "Privacy Preferences",
+        "description": "Control data sharing, communication frequency, marketing preferences, and choose what information is visible to family members."
+      }
+    ]
+  },
+  "Sessions": {
+    "pageTitle": "Active Sessions",
+    "items": [
+      {
+        "title": "Active Sessions",
+        "description": "List of all devices and browsers currently logged into your WealthVault account with session timestamps and locations."
+      },
+      {
+        "title": "Session Management",
+        "description": "Ability to terminate any active session remotely to ensure unauthorized access is immediately stopped."
+      },
+      {
+        "title": "Device Recognition",
+        "description": "List of trusted devices that don't require additional verification on login and unrecognized devices for security alerts."
+      }
+    ]
+  },
+  "Support": {
+    "pageTitle": "Support",
+    "items": [
+      {
+        "title": "Help Center",
+        "description": "Comprehensive documentation, tutorials, and FAQs covering all WealthVault features and common user issues."
+      },
+      {
+        "title": "Ticket Support",
+        "description": "Submit support tickets for issues, feature requests, or account problems with real-time status tracking and priority levels."
+      },
+      {
+        "title": "Chat Support",
+        "description": "Live chat with support agents available during business hours for immediate assistance with urgent account or technical issues."
+      }
+    ]
+  },
+  "FAQ": {
+    "pageTitle": "FAQ",
+    "items": [
+      {
+        "title": "Frequently Asked Questions",
+        "description": "Curated list of most common user questions categorized by topic with detailed answers and troubleshooting steps."
+      },
+      {
+        "title": "Search & Filter",
+        "description": "Quickly find answers by searching keywords or browsing by categories like account setup, security, investments, and billing."
+      },
+      {
+        "title": "Related Articles",
+        "description": "Additional helpful resources and related questions to give you comprehensive understanding of various WealthVault features."
+      }
+    ]
+  },
+  "DataPrivacy": {
+    "pageTitle": "Data Privacy",
+    "items": [
+      {
+        "title": "Privacy Policy",
+        "description": "Complete details about how WealthVault collects, uses, stores, and protects your personal and financial data in compliance with regulations."
+      },
+      {
+        "title": "Data Encryption",
+        "description": "Your financial data is encrypted both in transit (SSL/TLS) and at rest using military-grade encryption standards for maximum security."
+      },
+      {
+        "title": "Data Rights",
+        "description": "Your rights to access, correct, delete, or port your data as per DPDP and other privacy regulations with transparent disclosure."
+      }
+    ]
+  },
+  "AdminUsers": {
+    "pageTitle": "User Management",
+    "items": [
+      {
+        "title": "User Accounts",
+        "description": "Complete list of all registered users with their KYC status, account creation date, last login, and account verification status."
+      },
+      {
+        "title": "User Roles & Permissions",
+        "description": "Define and manage user access levels (Admin, Manager, User) with granular permissions for different sections and operations."
+      },
+      {
+        "title": "Account Actions",
+        "description": "Manage user accounts including suspension, activation, verification, and communication through admin interface with audit logs."
+      }
+    ]
+  },
+  "AdminKYC": {
+    "pageTitle": "KYC Verification",
+    "items": [
+      {
+        "title": "KYC Status",
+        "description": "Know Your Customer verification status of users including Pending, Approved, Rejected, and Expired with submission timestamps."
+      },
+      {
+        "title": "Document Verification",
+        "description": "Admin review of submitted identity and address proof documents with ability to approve, reject, or request resubmission."
+      },
+      {
+        "title": "Verification Queue",
+        "description": "Prioritized queue of pending KYC submissions with bulk processing options and automated compliance check results."
+      }
+    ]
+  },
+  "AdminKYCReview": {
+    "pageTitle": "KYC Review",
+    "items": [
+      {
+        "title": "Document Review",
+        "description": "Detailed examination of submitted KYC documents including PAN, Aadhaar, address proof with image quality and data validation checks."
+      },
+      {
+        "title": "Compliance Checks",
+        "description": "Automated verification against sanction lists, PEP databases, and regulatory requirements with manual override capability for edge cases."
+      },
+      {
+        "title": "Review Comments",
+        "description": "Add comments, notes, and communicate specific feedback to users about KYC status, rejections, or additional documentation requirements."
+      }
+    ]
+  },
+  "AdminLoans": {
+    "pageTitle": "Loan Management",
+    "items": [
+      {
+        "title": "Loan Applications",
+        "description": "Dashboard of all loan applications with statuses (Pending, Approved, Rejected, Disbursed) and application details for review."
+      },
+      {
+        "title": "Loan Disbursement",
+        "description": "Process of transferring approved loan amounts to borrower accounts with transaction records and disbursement status tracking."
+      },
+      {
+        "title": "Repayment Tracking",
+        "description": "Monitor loan repayment schedules, EMI payments, defaults, and outstanding balances across all active loans with payment history."
+      }
+    ]
+  },
+  "AdminFraud": {
+    "pageTitle": "Fraud Alerts",
+    "items": [
+      {
+        "title": "Suspicious Transactions",
+        "description": "Automated alerts for unusual account activity, high-value transfers, location anomalies, and transactions flagged by risk models."
+      },
+      {
+        "title": "Fraud Rules",
+        "description": "Configurable rules and thresholds for fraud detection including velocity limits, amount limits, and behavioral anomalies."
+      },
+      {
+        "title": "Investigation Tools",
+        "description": "Admin interface to review flagged transactions, verify legitimacy, block/unblock accounts, and maintain fraud investigation logs."
+      }
+    ]
+  },
+  "AdminAnalytics": {
+    "pageTitle": "Admin Analytics",
+    "items": [
+      {
+        "title": "User Metrics",
+        "description": "Key performance indicators including active users, new registrations, churn rate, average account value, and engagement metrics."
+      },
+      {
+        "title": "Financial Insights",
+        "description": "Aggregated financial data showing total assets under management, transaction volumes, investment distribution, and portfolio composition."
+      },
+      {
+        "title": "Trend Analysis",
+        "description": "Historical trends and comparative analytics showing month-over-month, quarter-over-quarter growth and performance against targets."
+      }
+    ]
+  },
+  "AdminAudit": {
+    "pageTitle": "Audit Logs",
+    "items": [
+      {
+        "title": "Audit Trail",
+        "description": "Complete record of all system activities including user logins, transactions, data modifications, and admin actions with timestamps."
+      },
+      {
+        "title": "Log Filters",
+        "description": "Filter and search audit logs by user, action type, date range, or transaction ID for compliance and security investigations."
+      },
+      {
+        "title": "Data Integrity",
+        "description": "Immutable audit logs that ensure accountability, detect unauthorized access, and provide evidence for compliance audits and investigations."
+      }
+    ]
+  },
+  "KYCSubmission": {
+    "pageTitle": "KYC Submission",
+    "items": [
+      {
+        "title": "KYC Documents",
+        "description": "Submit identity proof (PAN, Aadhaar), address proof (electricity bill, rental agreement), and income documentation for verification."
+      },
+      {
+        "title": "Document Requirements",
+        "description": "Clear guidelines on accepted document types, file formats (PDF, JPG), file sizes, and image quality standards for successful submission."
+      },
+      {
+        "title": "Submission Status",
+        "description": "Real-time tracking of KYC submission status with notifications on approval, rejection, or if additional documents are requested."
+      }
+    ]
+  },
+  "SecurityAlert": {
+    "pageTitle": "Security Alert",
+    "items": [
+      {
+        "title": "Alert Types",
+        "description": "Various security alerts including login from new device, suspicious activity, failed login attempts, and permission changes."
+      },
+      {
+        "title": "Alert Actions",
+        "description": "Quick response options to security alerts like confirming login legitimacy, blocking transactions, or changing password immediately."
+      },
+      {
+        "title": "Alert History",
+        "description": "Complete history of all security alerts with timestamps, details, and actions taken to help you monitor account security."
+      }
+    ]
+  },
+  "Register": {
+    "pageTitle": "Register",
+    "items": [
+      {
+        "title": "Registration Requirements",
+        "description": "Basic information needed for account creation including email, mobile number, password, and personal details for account setup."
+      },
+      {
+        "title": "Email & SMS Verification",
+        "description": "Verification links sent to email and OTP sent to registered mobile number to confirm your contact information and secure your account."
+      },
+      {
+        "title": "Terms & Conditions",
+        "description": "Important legal agreements and policies you must accept before registration, including privacy policy and user agreement."
+      }
+    ]
+  },
+  "Login": {
+    "pageTitle": "Login",
+    "items": [
+      {
+        "title": "Two-Factor Authentication",
+        "description": "Additional security layer requiring OTP via SMS or authenticator app along with password for enhanced account protection against unauthorized access."
+      },
+      {
+        "title": "Forgot Password",
+        "description": "Recovery process for forgotten passwords using email verification, security questions, or other identity verification methods."
+      },
+      {
+        "title": "Session Management",
+        "description": "Login session creation and management with automatic timeout for inactivity, single session enforcement, or multi-device access options."
+      }
+    ]
+  }
+}

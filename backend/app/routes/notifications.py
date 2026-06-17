@@ -2,6 +2,7 @@
 from datetime import datetime
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Query
+from pydantic import BaseModel
 from bson import ObjectId
 from app.core.database import get_database
 from app.core.security import get_current_user
@@ -13,6 +14,28 @@ log = Logifyx(
     color=True,  # Ensure colored output for console logs
 )   
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
+
+
+class FCMTokenRequest(BaseModel):
+    fcm_token: str
+
+
+@router.post("/fcm-token")
+async def register_fcm_token(data: FCMTokenRequest, current_user: dict = Depends(get_current_user)):
+    """
+    Store the user's Flutter app FCM token so the backend can send push notifications
+    for large payment approvals. Called by the Flutter app on login.
+    """
+    user_id = str(current_user["_id"])
+    if not data.fcm_token.strip():
+        raise HTTPException(status_code=400, detail="FCM token is required")
+    db = get_database()
+    await db.users.update_one(
+        {"_id": current_user["_id"]},
+        {"$set": {"fcm_token": data.fcm_token, "fcm_token_updated_at": datetime.utcnow()}},
+    )
+    log.info(f"Flutter FCM token registered: user={user_id}")
+    return {"message": "FCM token registered"}
 
 
 @router.get("/")
@@ -139,3 +162,89 @@ async def unread_alerts_count(current_user: dict = Depends(get_current_user)):
     count = await db.alerts.count_documents({"user_id": user_id, "is_read": False})
     log.debug(f"Unread alerts: user={user_id}, count={count}")
     return {"unread_count": count}
+
+
+@router.get("/unified")
+async def get_unified_notifications(current_user: dict = Depends(get_current_user)):
+    """Get unified notifications from transactions, fraud logs, and family events."""
+    user_id = str(current_user["_id"])
+    log.info(f"Fetching unified notifications: user={user_id}")
+    db = get_database()
+    notifications = []
+
+    # 1. High-risk transactions (last 30 days)
+    from datetime import timedelta
+    thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+    
+    txn_cursor = db.transactions.find({
+        "user_id": user_id,
+        "risk_score": {"$gte": 0.7},
+        "created_at": {"$gte": thirty_days_ago}
+    }).sort("created_at", -1).limit(20)
+    
+    txns = await txn_cursor.to_list(20)
+    for txn in txns:
+        txn = decrypt_user_data(txn)
+        notifications.append({
+            "type": "transaction",
+            "message": f"High-risk transaction detected: ₹{txn['amount']:,.0f} - {txn.get('description', 'Transaction')}",
+            "timestamp": str(txn.get("created_at", "")),
+            "status": "critical" if txn.get("risk_score", 0) >= 0.85 else "warning"
+        })
+
+    # 2. Fraud logs
+    fraud_cursor = db.fraud_logs.find({
+        "user_id": user_id,
+        "status": "pending_review"
+    }).sort("created_at", -1).limit(10)
+    
+    fraud_logs = await fraud_cursor.to_list(10)
+    for fraud in fraud_logs:
+        notifications.append({
+            "type": "fraud",
+            "message": f"Suspicious activity flagged: ₹{fraud.get('amount', 0):,.0f} - Under review",
+            "timestamp": str(fraud.get("created_at", "")),
+            "status": "critical"
+        })
+
+    # 3. Family alerts (spending limit exceeded)
+    alert_cursor = db.alerts.find({
+        "user_id": user_id,
+        "alert_type": "spending_limit_exceeded",
+        "created_at": {"$gte": thirty_days_ago}
+    }).sort("created_at", -1).limit(10)
+    
+    alerts = await alert_cursor.to_list(10)
+    for alert in alerts:
+        alert = decrypt_user_data(alert)
+        notifications.append({
+            "type": "family",
+            "message": alert.get("reason", "Family spending limit exceeded"),
+            "timestamp": str(alert.get("created_at", "")),
+            "status": "warning"
+        })
+
+    # 4. Family invitations
+    user_email = current_user["email"]
+    invite_cursor = db.family_invitations.find({
+        "invitee_email": user_email,
+        "status": "pending"
+    }).sort("created_at", -1).limit(5)
+    
+    invites = await invite_cursor.to_list(5)
+    for invite in invites:
+        inviter = await db.users.find_one({"_id": ObjectId(invite["inviter_user_id"])})
+        if inviter:
+            inviter = decrypt_user_data(inviter)
+            notifications.append({
+                "type": "family",
+                "message": f"Family invitation from {inviter['full_name']}",
+                "timestamp": str(invite.get("created_at", "")),
+                "status": "info"
+            })
+
+    # Sort by timestamp (latest first)
+    notifications.sort(key=lambda x: x["timestamp"], reverse=True)
+    
+    log.info(f"Returned {len(notifications)} unified notifications for user={user_id}")
+    return notifications

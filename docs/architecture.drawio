@@ -1,0 +1,304 @@
+<mxfile host="Electron" modified="2026-06-06T12:00:00.000Z" agent="Claude Code" version="21.0.0" type="device">
+  <diagram id="psb-architecture" name="PSB Architecture">
+    <mxGraphModel dx="1000" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" adaptiveColors="auto" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="WEALTHVAULT PSB — FULL SYSTEM ARCHITECTURE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1;fontSize=18;fontColor=#1a237e;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="1054" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- User Browser -->
+        <mxCell id="user" value="User / Browser" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="760" y="80" width="130" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Mock Frontend -->
+        <mxCell id="mock_fe" value="Mock Frontend&lt;br&gt;(Phishing Lure Pages)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="200" width="165" height="65" as="geometry" />
+        </mxCell>
+
+        <!-- FRONTEND APP SWIMLANE -->
+        <mxCell id="fe_lane" value="&lt;b&gt;Frontend App — React 19 + Vite + Tailwind CSS (Port 5173)&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="190" width="760" height="205" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_auth" value="Auth&lt;br&gt;Login/Register/KYC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="15" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_banking" value="Banking&lt;br&gt;Accounts/Txns/Pay" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="133" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_invest" value="Investments&lt;br&gt;Goals/SIPs/Portfolio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="251" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_analytics" value="Analytics&lt;br&gt;Dashboard/Credit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="369" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_ai" value="AI Tools&lt;br&gt;Chatbot/What-If/Tax" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="487" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_family" value="Family Banking&lt;br&gt;+ Map Locator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="605" y="45" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_state" value="State: Zustand (useAuthStore) + React Query | Transport: Axios (api.ts) | i18n: en/hi/pa | Themes: 5 color modes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="15" y="115" width="570" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_biometrics" value="Biometric Auth (12 DOM signals)&lt;br&gt;+ Cloudflare Turnstile CAPTCHA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="596" y="115" width="149" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="fe_rbac" value="Access Control: RoleProtectedRoute | KYCGuard | Navigation Tour | Admin Pages (9) | Employee Notification Center" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="fe_lane">
+          <mxGeometry x="15" y="163" width="730" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- SENTINEL FRONTEND SWIMLANE -->
+        <mxCell id="sentinel_lane" value="&lt;b&gt;Sentinel Security Awareness Platform — React 19 (Port 5174)&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="190" width="520" height="205" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_phishing" value="Phishing&lt;br&gt;Simulation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="15" y="45" width="88" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_social" value="Social Eng.&lt;br&gt;Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="118" y="45" width="88" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_incident" value="Incident Drill&lt;br&gt;Module" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="221" y="45" width="88" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_campaign" value="Campaign&lt;br&gt;Builder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="324" y="45" width="88" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_threat" value="Threat Portal&lt;br&gt;(Admin Panel)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="417" y="45" width="88" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_pam" value="PAM Trust Score (float 0-1) | Scoring Engine | Employee Portal | Incident Reports" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="15" y="115" width="490" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="sent_plugin" value="Plugin Registration in FastAPI app.py | JWT cookie session handoff | Simulation Lab (backend/app/simulation/)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="sentinel_lane">
+          <mxGeometry x="15" y="163" width="490" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- BACKEND API SWIMLANE -->
+        <mxCell id="backend_lane" value="&lt;b&gt;Backend FastAPI App (Port 8000) — WealthVault API (app.py)&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="445" width="760" height="255" as="geometry" />
+        </mxCell>
+        <mxCell id="be_auth" value="Auth &amp; Sessions&lt;br&gt;OTP + Device FP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="10" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_accounts" value="Accounts API&lt;br&gt;AA Integration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="128" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_txns" value="Transactions&lt;br&gt;&amp; Payments (UPI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="246" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_loans" value="Loans API&lt;br&gt;EMI / Applications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="364" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_invest" value="Investments&lt;br&gt;Goals / SIPs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="482" y="45" width="108" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_kyc" value="KYC &amp; Aadhaar&lt;br&gt;Verhoeff + OCR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="600" y="45" width="150" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="be_services" value="Services: EmailService (Gmail API) | SMSService (Twilio) | KafkaService (AIOKafka) | BudgetService | DeviceService | CreditScoreService | TurnstileService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="10" y="115" width="740" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="be_security" value="Security: AES-256-GCM Field Encryption | Argon2id Password Hashing | JWT + ECDSA | RBAC (customer/employee/RM/super_admin) | CountingBloomFilter (BehaviorDNA)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="10" y="165" width="740" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="be_admin" value="Admin Routes: User Mgmt | KYC Review | Loan Approval | Fraud Analytics | Audit Logs (JSONL) | ML Routes | Tax Routes | Simulation Control | Notification Alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="backend_lane">
+          <mxGeometry x="10" y="215" width="740" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- COMPLIANCE APP SWIMLANE -->
+        <mxCell id="compliance_lane" value="&lt;b&gt;Compliance Sidecar — FastAPI (Port 8002) (compliance_app.py)&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="445" width="520" height="255" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_rag" value="RAG Pipeline&lt;br&gt;FAISS + BM25" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="15" y="45" width="148" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_voice" value="Voice API&lt;br&gt;TTS / Call Recording" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="178" y="45" width="148" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_chat" value="Compliance AI Chat&lt;br&gt;FAQ + Support Cards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="341" y="45" width="164" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_stack" value="LangChain + Sentence Transformers + Rank-BM25 + Groq llama-3.3-70b-versatile | rag_client.py async queries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="15" y="115" width="490" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_he" value="MockHomomorphicEncryption (HE_CT_ tokens) | Audit Logger (audit.jsonl) | Language Detection (en/hi/pa)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="15" y="165" width="490" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="comp_input" value="Input Normalization | Voice truncation for TTS | Confidence scoring | Hinglish detection" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="compliance_lane">
+          <mxGeometry x="15" y="215" width="490" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ML MODELS SWIMLANE -->
+        <mxCell id="ml_lane" value="&lt;b&gt;ML Models Layer — PyTorch + Scikit-learn + HuggingFace Transformers (7 Models)&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="750" width="760" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m1" value="M1 BehaviorDNA&lt;br&gt;Isolation Forest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="10" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m2" value="M2 BERT&lt;br&gt;Fraud Classifier" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="115" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m3" value="M3 BERT&lt;br&gt;Chat Stress" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="220" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m4" value="M4 RiskMLP&lt;br&gt;PyTorch MLP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="325" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m5" value="M5 RF Classifier&lt;br&gt;+ TF-IDF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="430" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m6" value="M6 LSTM&lt;br&gt;Seq Anomaly" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="535" y="40" width="92" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_m7" value="M7 GraphSAGE&lt;br&gt;Insider Threat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ml_lane">
+          <mxGeometry x="645" y="40" width="105" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- INFRASTRUCTURE SWIMLANE -->
+        <mxCell id="infra_lane" value="&lt;b&gt;Infrastructure — Docker Compose&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="910" width="760" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="infra_mongo" value="MongoDB&lt;br&gt;(wealthvault DB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="infra_lane">
+          <mxGeometry x="10" y="40" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="infra_redis" value="Redis Stack&lt;br&gt;Ports 6379 / 8001" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="infra_lane">
+          <mxGeometry x="155" y="40" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="infra_kafka" value="Apache Kafka&lt;br&gt;+ ZooKeeper (9092)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="infra_lane">
+          <mxGeometry x="300" y="40" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="infra_kafdrop" value="Kafdrop UI&lt;br&gt;Port 9000" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="infra_lane">
+          <mxGeometry x="445" y="40" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="infra_vol" value="Shared Volume&lt;br&gt;model_data (ML weights)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="infra_lane">
+          <mxGeometry x="590" y="40" width="155" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- EXTERNAL SERVICES SWIMLANE -->
+        <mxCell id="ext_lane" value="&lt;b&gt;External Services / Third-Party APIs&lt;/b&gt;" style="swimlane;startSize=30;fillColor=#ffe6cc;strokeColor=#d6b656;fontStyle=1;fontSize=12;html=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="750" width="520" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_vision" value="Google Cloud Vision&lt;br&gt;KYC / Document OCR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="15" y="45" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_groq" value="Groq API&lt;br&gt;llama-3.3-70b LLM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="175" y="45" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_turnstile" value="Cloudflare Turnstile&lt;br&gt;CAPTCHA Verify" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="335" y="45" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_gmail" value="Gmail API&lt;br&gt;Transactional Email" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="15" y="120" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_twilio" value="Twilio SMS&lt;br&gt;Transaction Alerts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="175" y="120" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_firebase" value="Firebase&lt;br&gt;Push Notifications" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="335" y="120" width="155" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_yahoo" value="Yahoo Finance&lt;br&gt;Stock Quotes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="15" y="195" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_aa" value="Account Aggregator&lt;br&gt;(AA Framework)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="175" y="195" width="145" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="ext_threat" value="Threat Intel Scraper&lt;br&gt;OSINT / BeautifulSoup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="ext_lane">
+          <mxGeometry x="335" y="195" width="155" height="55" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EDGES ===== -->
+        <mxCell id="e_user_fe" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#6c8ebf;" edge="1" source="user" target="fe_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_user_sent" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#b85450;" edge="1" source="user" target="sentinel_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fe_be" value="REST / HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#82b366;" edge="1" source="fe_lane" target="backend_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fe_comp" value="Compliance AI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#9673a6;" edge="1" source="fe_lane" target="compliance_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sent_be" value="Simulation API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#b85450;" edge="1" source="sentinel_lane" target="backend_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sent_mock" value="Generates lure pages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#b85450;" edge="1" source="sentinel_lane" target="mock_fe" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sent_threat" value="OSINT feeds" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#b85450;" edge="1" source="sentinel_lane" target="ext_threat" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_ml" value="ML Inference (fraud/risk/behavior)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#82b366;" edge="1" source="backend_lane" target="ml_lane" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_mongo" value="queries" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#6c8ebf;" edge="1" source="backend_lane" target="infra_mongo" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_redis" value="cache / sessions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#6c8ebf;" edge="1" source="backend_lane" target="infra_redis" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_kafka" value="event streaming" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#6c8ebf;" edge="1" source="backend_lane" target="infra_kafka" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_vision" value="KYC OCR" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_vision" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_gmail" value="email alerts" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_gmail" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_twilio" value="SMS alerts" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_twilio" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_firebase" value="push notif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_firebase" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_yahoo" value="stock quotes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_yahoo" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_aa" value="AA consent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_aa" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_be_turnstile" value="CAPTCHA verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="backend_lane" target="ext_turnstile" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_comp_groq" value="LLM inference" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#9673a6;" edge="1" source="compliance_lane" target="ext_groq" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_comp_mongo" value="doc store" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#9673a6;" edge="1" source="compliance_lane" target="infra_mongo" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ml_vol" value="load / save weights" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=11;strokeColor=#d6b656;" edge="1" source="ml_lane" target="infra_vol" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- LEGEND -->
+        <mxCell id="legend_bg" value="&lt;b&gt;LEGEND&lt;/b&gt;" style="swimlane;startSize=24;fillColor=#f5f5f5;strokeColor=#cccccc;html=1;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1055" width="310" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_fe" value="Frontend / Infrastructure" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="legend_bg">
+          <mxGeometry x="10" y="30" width="140" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_sec" value="Security / Warnings" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="legend_bg">
+          <mxGeometry x="160" y="30" width="140" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_sent" value="Threats / Sentinel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="legend_bg">
+          <mxGeometry x="10" y="65" width="140" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg_ml" value="AI / ML Models" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="legend_bg">
+          <mxGeometry x="160" y="65" width="140" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- SCOPE BOX -->
+        <mxCell id="scope_box" value="&lt;b&gt;Scope:&lt;/b&gt; WealthVault PSB — Full System Architecture&lt;br&gt;&lt;b&gt;Stack:&lt;/b&gt; FastAPI + React 19 + MongoDB + Redis + Kafka + 7 ML Models + Sentinel&lt;br&gt;&lt;b&gt;Author:&lt;/b&gt; Madhur Prakash &amp;nbsp;&amp;nbsp; &lt;b&gt;Date:&lt;/b&gt; 2026-06-06" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#cccccc;align=left;spacingLeft=10;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1060" width="600" height="60" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

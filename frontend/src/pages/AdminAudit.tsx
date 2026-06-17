@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminAPI } from '../api';
+import PageLoader from '../components/animation/PageLoader';
 
 const AdminAudit: React.FC = () => {
   const [logs, setLogs] = useState<any[]>([]);
@@ -15,7 +16,7 @@ const AdminAudit: React.FC = () => {
     finally { setLoading(false); }
   };
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading audit logs" />;
 
   return (
     <div>

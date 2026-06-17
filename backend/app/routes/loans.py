@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
 from bson import ObjectId
 from app.core.database import get_database
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_kyc
 from app.helper.utils import encrypt_user_data, decrypt_user_data
 from app.core.kafka_service import kafka_service
 from logifyx import Logifyx
@@ -26,7 +26,7 @@ INTEREST_RATES = {
 
 
 @router.post("/apply", status_code=201)
-async def apply_loan(data: LoanApplication, current_user: dict = Depends(get_current_user)):
+async def apply_loan(data: LoanApplication, current_user: dict = Depends(require_kyc)):
     user_id = str(current_user["_id"])
     log.info(f"Loan application: user={user_id}, type={data.loan_type}, amount=₹{data.amount}, tenure={data.tenure_months}m")
     db = get_database()

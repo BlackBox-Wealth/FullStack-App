@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { adminAPI } from '../api';
 import { useAuthStore } from '../store';
+import PageLoader from '../components/animation/PageLoader';
 
 const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -32,7 +33,7 @@ const AdminUsers: React.FC = () => {
     loadUsers();
   };
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading users" />;
 
   return (
     <div>

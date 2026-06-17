@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from argon2 import PasswordHasher
+from bson import ObjectId
 from argon2.exceptions import VerifyMismatchError, VerificationError
 from fastapi import Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer
@@ -43,38 +44,37 @@ def get_password_hash(password: str) -> str:
         raise ValueError("Password hashing failed")
 
 
-def get_password_hash(password: str) -> str:
-    try:
-        if not password or not password.strip():
-            raise ValueError("Password cannot be empty")
-        return _ph.hash(password)
-    
-    except Exception:
-        raise ValueError("Password hashing failed")
-
-
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None, session_id: Optional[str] = None) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + (expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire, "type": "access"})
+    
+    # Add session_id if provided
+    if session_id:
+        to_encode["session_id"] = session_id
+    
     token = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-    log.debug(f"Access token created for sub={data.get('sub')}, expires in {settings.ACCESS_TOKEN_EXPIRE_MINUTES}m")
+    log.info(f"Access token created for sub={data.get('sub')}, expires in {settings.ACCESS_TOKEN_EXPIRE_MINUTES}m")
     return token
 
 
-def create_refresh_token(data: dict) -> str:
+def create_refresh_token(data: dict, session_id: Optional[str] = None) -> str:
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode.update({"exp": expire, "type": "refresh"})
+    
+    # Add session_id if provided
+    if session_id:
+        to_encode["session_id"] = session_id
+        
     token = jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
-    log.debug(f"Refresh token created for sub={data.get('sub')}, expires in {settings.REFRESH_TOKEN_EXPIRE_DAYS}d")
+    log.info(f"Refresh token created for sub={data.get('sub')}, session_id={session_id}, expires in {settings.REFRESH_TOKEN_EXPIRE_DAYS}d")
     return token
 
 
 def decode_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
-        log.debug(f"Token decoded successfully, type={payload.get('type')}, sub={payload.get('sub')}")
         return payload
     except JWTError as e:
         log.warning(f"JWT decode failed: {e}")
@@ -89,21 +89,28 @@ async def get_current_user(request: Request):
     """Extract user from httpOnly cookie or Authorization header."""
     token = None
 
-    # 1. Try httpOnly cookie first (secure)
-    token = request.cookies.get("access_token")
-    if token:
-        log.debug("Token found in httpOnly cookie")
+    # 1. Authorization header first (universal)
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ", 1)[1]
+        log.info("Token found in Authorization header")
 
-    # 2. Fallback to Authorization header (for API clients / testing)
+    # 2. fallback to cookie (web)
     if not token:
-        auth_header = request.headers.get("Authorization")
-        if auth_header and auth_header.startswith("Bearer "):
-            token = auth_header.split(" ", 1)[1]
-            log.debug("Token found in Authorization header")
+        token = request.cookies.get("access_token")
+        if token:
+            log.info("Token found in httpOnly cookie")
+            token = request.cookies.get("access_token")
+            log.info("Token found in httpOnly cookie")
 
+    # reject if no token found
     if not token:
-        log.warning("No auth token found in cookie or header")
-        raise HTTPException(status_code=401, detail="Not authenticated")
+        log.warning("No authentication token provided")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     payload = decode_token(token)
 
@@ -115,9 +122,31 @@ async def get_current_user(request: Request):
     if user_id is None:
         log.warning("Token missing 'sub' claim")
         raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # Check if session is valid (if session_id exists in token)
+    session_id = payload.get("session_id")
+    if session_id:
+        from app.core.redis_client import get_redis
+        redis = get_redis()
+        db = get_database()
+        
+        # Check session validity
+        session_valid = False
+        if redis:
+            session_data = await redis.get(f"session:{session_id}")
+            session_valid = session_data is not None
+        else:
+            session_doc = await db.sessions.find_one({"session_id": session_id, "is_active": True})
+            session_valid = session_doc is not None
+        
+        if not session_valid:
+            log.warning(f"Session revoked or invalid: session_id={session_id}")
+            raise HTTPException(status_code=401, detail="Session has been revoked")
+    else:
+        # Old token without session_id - allow but log warning
+        log.warning(f"Token without session_id detected for user_id={user_id} - consider re-login")
 
     db = get_database()
-    from bson import ObjectId
     user = await db.users.find_one({"_id": ObjectId(user_id)})
 
     if user is None:
@@ -126,7 +155,8 @@ async def get_current_user(request: Request):
     user = decrypt_user_data(user) if user else None  # Decrypt fields if user exists
 
     user["id"] = str(user["_id"])
-    log.debug(f"Authenticated user: {user['email']} (role={user['role']})")
+    user["session_id"] = session_id  # Add session_id to user object
+    log.info(f"Authenticated user: {user['email']} (role={user['role']})")
     return user
 
 
@@ -144,3 +174,16 @@ def require_role(*roles):
             )
         return current_user
     return role_checker
+async def require_kyc(current_user: dict = Depends(get_current_user)):
+    """Dependency to check if user has verified KYC status."""
+    if current_user.get("kyc_status") != "verified":
+        log.warning(f"KYC required: user={current_user.get('email')} status={current_user.get('kyc_status')}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "code": "KYC_REQUIRED",
+                "message": "Identity verification required to access this feature.",
+                "current_status": current_user.get("kyc_status", "none")
+            }
+        )
+    return current_user

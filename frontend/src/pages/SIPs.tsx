@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { investmentsAPI, accountsAPI } from '../api';
+import { investmentsAPI, accountsAPI, mlAPI } from '../api';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
+import { Lightbulb, Info } from 'lucide-react';
+import PageLoader from '../components/animation/PageLoader';
 
 const FUND_OPTIONS = {
   equity: [
@@ -29,6 +31,7 @@ const SIPs: React.FC = () => {
   const [showAdjust, setShowAdjust] = useState<any>(null);
   const [activeFilter, setActiveFilter] = useState('all');
   const [projectionPeriod, setProjectionPeriod] = useState<'weekly' | 'monthly' | 'yearly'>('monthly');
+  const [showInfo, setShowInfo] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -49,20 +52,24 @@ const SIPs: React.FC = () => {
     step_up_pct: 0
   });
 
+  const [llmNudge, setLlmNudge] = useState<string | null>(null);
+
   useEffect(() => {
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
-      const [sipRes, accRes, goalRes] = await Promise.all([
+      const [sipRes, accRes, goalRes, insightRes] = await Promise.all([
         investmentsAPI.getSIPs(),
         accountsAPI.getAll(),
-        investmentsAPI.getGoals()
+        investmentsAPI.getGoals(),
+        mlAPI.sipInsights().catch(() => null)
       ]);
       setSips(sipRes.data);
       setAccounts(accRes.data);
       setGoals(goalRes.data);
+      if (insightRes?.data?.llm_nudge) setLlmNudge(insightRes.data.llm_nudge);
       if (accRes.data.length > 0) {
         setForm(f => ({ ...f, account_id: accRes.data[0].id }));
       }
@@ -136,17 +143,31 @@ const SIPs: React.FC = () => {
 
   const chartData = generateProjectionData();
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading SIP dashboard" />;
 
   return (
     <div className="sips-page">
       <div className="page-header sticky-header">
         <div>
-          <h2 className="gradient-text">Wealth SIP Dashboard</h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 4 }}>
+            <h2 className="gradient-text" style={{ margin: 0 }}>
+              Wealth SIP Dashboard
+            </h2>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }} onMouseEnter={() => setShowInfo(true)} onMouseLeave={() => setShowInfo(false)}>
+              <Info size={18} className="text-muted" style={{ cursor: 'help' }} />
+              {showInfo && (
+                <div style={{ position: 'absolute', top: 28, left: 0, width: 340, zIndex: 99999, padding: '16px', fontSize: '0.85rem', fontWeight: 'normal', color: '#E2E8F0', backgroundColor: '#1E1E2F', border: '1px solid #334155', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}>
+                  <strong style={{ color: '#FFFFFF', display: 'block', marginBottom: 8, fontSize: '0.95rem' }}>SIP Glossary</strong>
+                  <strong style={{ color: '#818CF8' }}>Systematic Investment Plan (SIP)</strong>: A strategy where you invest a fixed amount at regular intervals (monthly, weekly) into mutual funds.<br/><br/>
+                  <strong style={{ color: '#818CF8' }}>Step-up SIP</strong>: Automatically increases your contribution by a fixed percentage annually to beat inflation and massively accelerate compounding.
+                </div>
+              )}
+            </div>
+          </div>
           <p>Compound your wealth with systematic, multi-period growth strategies</p>
         </div>
         <button className="btn btn-primary shadow-pulse" onClick={() => setShowCreate(true)}>
-          🚀 Initiate New SIP
+          Initiate New SIP
         </button>
       </div>
 
@@ -184,6 +205,13 @@ const SIPs: React.FC = () => {
         </div>
       </div>
 
+      {llmNudge && (
+        <div style={{ marginBottom: 32, padding: 14, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 12, fontSize: '0.9rem', color: 'var(--text-secondary)', display: 'flex', gap: 12, alignItems: 'center', boxShadow: 'var(--shadow-sm)' }}>
+          <Lightbulb size={24} strokeWidth={1.5} style={{ flexShrink: 0, color: 'var(--accent-secondary)' }} />
+          <span style={{ lineHeight: 1.5, width: '100%', fontWeight: 500 }}>{llmNudge}</span>
+        </div>
+      )}
+
       <div className="grid-2" style={{ gridTemplateColumns: '1.2fr 0.8fr', gap: '32px' }}>
         <div className="card glass-premium">
           <div className="card-header flex-between">
@@ -207,7 +235,13 @@ const SIPs: React.FC = () => {
                 <XAxis dataKey="name" stroke="var(--text-muted)" fontSize={11} axisLine={false} tickLine={false} dy={10} />
                 <YAxis hide domain={['auto', 'auto']} />
                 <Tooltip
-                  contentStyle={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', backdropFilter: 'blur(8px)' }}
+                  contentStyle={{
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '12px',
+                    color: 'var(--text-primary)',
+                    boxShadow: 'var(--shadow-md)',
+                  }}
                   itemStyle={{ fontSize: '13px' }}
                 />
                 <Area type="monotone" dataKey="value" stroke="var(--accent-primary)" strokeWidth={4} fill="url(#colorValue)" animationDuration={1500} />
@@ -231,6 +265,7 @@ const SIPs: React.FC = () => {
                 { category: 'Debt', value: sips.filter(s => s.fund_category === 'debt').length },
                 { category: 'Hybrid', value: sips.filter(s => s.fund_category === 'hybrid').length }
               ]}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(100, 116, 139, 0.16)" />
                 <XAxis dataKey="category" stroke="var(--text-muted)" fontSize={11} axisLine={false} tickLine={false} />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={40}>
                   {[0, 1, 2].map((i) => <Cell key={i} fill={i === 0 ? 'var(--accent-primary)' : i === 1 ? 'var(--success)' : 'var(--warning)'} opacity={0.8} />)}
@@ -302,7 +337,7 @@ const SIPs: React.FC = () => {
                 <button className="icon-btn" title="Adjust Plan" onClick={() => {
                   setShowAdjust(sip);
                   setAdjustForm({ amount: sip.amount, frequency: sip.frequency, status: sip.status, step_up_pct: sip.step_up_pct });
-                }}>⚙️</button>
+                }}>Adjust</button>
 
                 {sip.status === 'active' ? (
                   <button className="action-btn pause" onClick={async () => {
@@ -334,7 +369,7 @@ const SIPs: React.FC = () => {
           <div className="modal glass-modal shadow-2xl" onClick={e => e.stopPropagation()} style={{ maxWidth: '650px' }}>
             <div className="modal-header">
               <div className="header-content">
-                <h3>🌊 Start Wealth Stream</h3>
+                <h3>Start Wealth Stream</h3>
                 <p className="text-muted">Automated long-term systematic investing</p>
               </div>
               <button className="modal-close" onClick={() => setShowCreate(false)}>✕</button>
@@ -402,7 +437,7 @@ const SIPs: React.FC = () => {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-primary btn-full" onClick={handleCreate}>🚢 Launch SIP Strategy</button>
+              <button className="btn btn-primary btn-full" onClick={handleCreate}>Launch SIP Strategy</button>
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { notificationsAPI } from '../api';
+import { AlertTriangle, Siren, X } from 'lucide-react';
 
 const AlertBanner: React.FC = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
@@ -37,7 +38,6 @@ const AlertBanner: React.FC = () => {
         const isHighRisk = alert.risk_score > 0.7;
         const bgColor = isHighRisk ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)';
         const borderColor = isHighRisk ? 'var(--danger)' : 'var(--warning)';
-        const icon = isHighRisk ? '🚨' : '⚠️';
 
         return (
           <div
@@ -56,7 +56,9 @@ const AlertBanner: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', gap: 16, flex: 1 }}>
-              <div style={{ fontSize: '1.5rem' }}>{icon}</div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, color: borderColor }}>
+                {isHighRisk ? <Siren size={20} /> : <AlertTriangle size={20} />}
+              </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
                   <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: borderColor }}>
@@ -109,7 +111,7 @@ const AlertBanner: React.FC = () => {
                 e.currentTarget.style.color = 'var(--text-muted)';
               }}
             >
-              ✕
+              <X size={16} />
             </button>
           </div>
         );

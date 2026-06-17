@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminAPI } from '../api';
+import PageLoader from '../components/animation/PageLoader';
 
 const AdminKYC: React.FC = () => {
   const [pendingUsers, setPendingUsers] = useState<any[]>([]);
@@ -20,7 +21,7 @@ const AdminKYC: React.FC = () => {
     loadPending();
   };
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading KYC queue" />;
 
   return (
     <div>
@@ -34,7 +35,7 @@ const AdminKYC: React.FC = () => {
       {pendingUsers.length === 0 ? (
         <div className="card">
           <div className="empty-state">
-            <div className="icon">✅</div>
+            <div className="icon">Done</div>
             <p>All KYC verifications are up to date!</p>
           </div>
         </div>
@@ -49,7 +50,7 @@ const AdminKYC: React.FC = () => {
                   alignItems: 'center', justifyContent: 'center',
                   fontSize: '1.3rem', color: 'var(--warning)'
                 }}>
-                  ⏳
+                  ...
                 </div>
                 <div>
                   <h4 style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{u.full_name}</h4>
@@ -57,7 +58,7 @@ const AdminKYC: React.FC = () => {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-sm btn-success" onClick={() => handleVerify(u.id, 'verified')}>✅ Verify</button>
+                <button className="btn btn-sm btn-success" onClick={() => handleVerify(u.id, 'verified')}>Verify</button>
                 <button className="btn btn-sm btn-danger" onClick={() => handleVerify(u.id, 'rejected')}>✕ Reject</button>
               </div>
             </div>

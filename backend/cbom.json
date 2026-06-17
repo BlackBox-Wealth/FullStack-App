@@ -1,0 +1,105 @@
+{
+  "bomFormat": "CBOM",
+  "specVersion": "0.1",
+  "source": "CycloneDX",
+  "cryptoAssets": [
+    {
+      "component": "PyJWT",
+      "version": "2.12.1",
+      "category": "signature",
+      "possible_algorithms": [
+        "HS256",
+        "RS256",
+        "ES256",
+        "EdDSA"
+      ],
+      "quantum_safe": false,
+      "risk": "MEDIUM",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "aiohttp",
+      "version": "3.13.5",
+      "category": "transport_security",
+      "possible_algorithms": [
+        "TLS"
+      ],
+      "quantum_safe": "depends",
+      "risk": "UNKNOWN",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "aiokafka",
+      "version": "0.13.0",
+      "category": "message_security",
+      "possible_algorithms": [
+        "SSL",
+        "TLS"
+      ],
+      "quantum_safe": "depends",
+      "risk": "UNKNOWN",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "aioredis",
+      "version": "2.0.1",
+      "category": "cache_security",
+      "possible_algorithms": [
+        "TLS"
+      ],
+      "quantum_safe": "depends",
+      "risk": "UNKNOWN",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "argon2-cffi",
+      "version": "25.1.0",
+      "category": "password_hashing",
+      "possible_algorithms": [
+        "Argon2id"
+      ],
+      "quantum_safe": true,
+      "risk": "LOW",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "certifi",
+      "version": "2026.2.25",
+      "category": "certificate_trust",
+      "possible_algorithms": [
+        "X509",
+        "TLS"
+      ],
+      "quantum_safe": "depends",
+      "risk": "UNKNOWN",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "cryptography",
+      "version": "46.0.7",
+      "category": "cryptographic_primitives",
+      "possible_algorithms": [
+        "AES",
+        "RSA",
+        "ECDSA",
+        "Ed25519",
+        "SHA256",
+        "ChaCha20"
+      ],
+      "quantum_safe": "depends",
+      "risk": "UNKNOWN",
+      "confidence": "AUTO_GENERATED"
+    },
+    {
+      "component": "ecdsa",
+      "version": "0.19.2",
+      "category": "digital_signature",
+      "possible_algorithms": [
+        "ECDSA"
+      ],
+      "quantum_safe": false,
+      "risk": "MEDIUM",
+      "confidence": "AUTO_GENERATED"
+    }
+  ]
+}

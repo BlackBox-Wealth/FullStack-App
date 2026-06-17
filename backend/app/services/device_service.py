@@ -4,7 +4,7 @@ Detects new device logins and geolocation changes, saves known devices to MongoD
 """
 import hashlib
 from datetime import datetime
-from typing import Optional
+import re 
 import httpx
 from logifyx import Logifyx
 
@@ -44,29 +44,58 @@ def _parse_user_agent(ua_string: str) -> dict:
         except Exception as e:
             log.warning(f"Failed to parse user agent: {e}")
 
-    # Fallback: basic string parsing
     browser = "Unknown Browser"
     os_info = "Unknown OS"
     ua_lower = ua_string.lower()
-    if "chrome" in ua_lower:
-        browser = "Chrome"
-    elif "firefox" in ua_lower:
-        browser = "Firefox"
-    elif "safari" in ua_lower:
-        browser = "Safari"
-    elif "edge" in ua_lower:
-        browser = "Edge"
 
-    if "windows" in ua_lower:
-        os_info = "Windows"
-    elif "mac os" in ua_lower or "macos" in ua_lower:
-        os_info = "macOS"
+    # Windows version mapping
+    if "windows nt 11" in ua_lower:
+        os_info = "Windows 11"
+    elif "windows nt 10.0" in ua_lower:
+        os_info = "Windows 10"
+    elif "windows nt 6.3" in ua_lower:
+        os_info = "Windows 8.1"
+    elif "windows nt 6.2" in ua_lower:
+        os_info = "Windows 8"
+    elif "windows nt 6.1" in ua_lower:
+        os_info = "Windows 7"
+    elif "windows" in ua_lower:
+        os_info = "Windows (Unknown Version)"
+
+    # macOS version extraction
+    elif "mac os x" in ua_lower or "macOS" in ua_lower:
+        if "10_15" in ua_lower:
+            os_info = "macOS 10.15 (Catalina)"
+        elif "10_14" in ua_lower:
+            os_info = "macOS 10.14 (Mojave)"
+        elif "10_13" in ua_lower:
+            os_info = "macOS 10.13 (High Sierra)"
+        elif "11" in ua_lower or "12" in ua_lower or "13" in ua_lower or "14" in ua_lower or "15" in ua_lower:
+            # macOS 11+ Big Sur and later
+            version_match = re.search(r"(1[1-5])[._]", ua_lower)
+            if version_match:
+                os_info = f"macOS {version_match.group(1)}"
+            else:
+                os_info = "macOS (Recent)"
+        else:
+            os_info = "macOS"
+
+    # Other OS
+    elif "android" in ua_lower:
+        version_match = re.search(r"android\s([0-9.]+)", ua_lower)
+        if version_match:
+            os_info = f"Android {version_match.group(1)}"
+        else:
+            os_info = "Android"
+    elif "iphone" in ua_lower or "ipad" in ua_lower:
+        version_match = re.search(r"os\s([0-9_]+)", ua_lower)
+        if version_match:
+            version = version_match.group(1).replace("_", ".")
+            os_info = f"iOS {version}"
+        else:
+            os_info = "iOS"
     elif "linux" in ua_lower:
         os_info = "Linux"
-    elif "android" in ua_lower:
-        os_info = "Android"
-    elif "iphone" in ua_lower or "ipad" in ua_lower:
-        os_info = "iOS"
 
     device_type = "mobile" if ("android" in ua_lower or "iphone" in ua_lower) else "desktop"
     return {"browser": browser, "os": os_info, "device_type": device_type, "raw": ua_string[:200]}

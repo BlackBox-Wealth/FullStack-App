@@ -142,6 +142,18 @@ async def connect_to_mongo():
         await db.portfolios.create_index("user_id", unique=True)
         await db.kyc_documents.create_index("user_id")
         await db.known_devices.create_index([("user_id", 1), ("device_fingerprint", 1)], unique=True)
+        
+        # TTL index for sessions - auto-delete after 7 days
+        await db.sessions.create_index("created_at", expireAfterSeconds=604800)
+        
+        # Family indexes
+        await db.families.create_index("head_user_id")
+        await db.family_members.create_index([("family_id", 1), ("user_id", 1)], unique=True)
+        await db.family_members.create_index("user_id")
+        await db.family_invitations.create_index("invitation_code", unique=True)
+        await db.family_invitations.create_index([("invitee_email", 1), ("status", 1)])
+        await db.family_invitations.create_index("expires_at", expireAfterSeconds=0)
+        
         log.info("All database indexes created successfully")
 
         log.info("✅ MongoDB connected and ready")

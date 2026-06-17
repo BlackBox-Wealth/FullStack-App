@@ -50,8 +50,8 @@ const SecurityAlert: React.FC = () => {
             </p>
             <div className="security-support-box">
               <p className="security-support-label">Need immediate help?</p>
-              <p className="security-support-number">📞 1800-XXX-XXXX</p>
-              <p className="security-support-email">📧 security@wealthvault.com</p>
+              <p className="security-support-number">Phone: 1800-XXX-XXXX</p>
+              <p className="security-support-email">Email: security@wealthvault.com</p>
             </div>
             <button
               className="security-btn security-btn-primary"
@@ -81,21 +81,21 @@ const SecurityAlert: React.FC = () => {
             {/* Info Cards */}
             <div className="security-info-grid">
               <div className="security-info-card">
-                <div className="security-info-icon">🔒</div>
+                <div className="security-info-icon">SEC</div>
                 <div>
                   <div className="security-info-title">Your data is safe</div>
                   <div className="security-info-text">We detected the login and are taking precautions</div>
                 </div>
               </div>
               <div className="security-info-card">
-                <div className="security-info-icon">📧</div>
+                <div className="security-info-icon">MAIL</div>
                 <div>
                   <div className="security-info-title">Alert email sent</div>
                   <div className="security-info-text">Full login details were emailed to your registered address</div>
                 </div>
               </div>
               <div className="security-info-card">
-                <div className="security-info-icon">⚡</div>
+                <div className="security-info-icon">NOW</div>
                 <div>
                   <div className="security-info-title">Act immediately</div>
                   <div className="security-info-text">If this wasn't you, secure your account now</div>
@@ -122,7 +122,7 @@ const SecurityAlert: React.FC = () => {
                 disabled={status === 'loading'}
               >
                 {status === 'loading' ? (
-                  <span className="security-spinner" />
+                  <span style={{ fontWeight: 700, letterSpacing: '0.2px' }}>Securing...</span>
                 ) : (
                   <>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -151,9 +151,9 @@ const SecurityAlert: React.FC = () => {
             <div className="security-support-footer">
               <p>Need immediate assistance?</p>
               <div className="security-support-contacts">
-                <a href="tel:1800XXXXXXX" className="security-contact-link">📞 1800-XXX-XXXX</a>
+                <a href="tel:1800XXXXXXX" className="security-contact-link">Phone: 1800-XXX-XXXX</a>
                 <span className="security-contact-sep">·</span>
-                <a href="mailto:security@wealthvault.com" className="security-contact-link">📧 security@wealthvault.com</a>
+                <a href="mailto:security@wealthvault.com" className="security-contact-link">Email: security@wealthvault.com</a>
               </div>
             </div>
           </>
@@ -396,19 +396,6 @@ const SecurityAlert: React.FC = () => {
         .security-btn-primary:hover {
           transform: translateY(-1px);
           box-shadow: 0 12px 32px -4px rgba(59, 130, 246, 0.5);
-        }
-
-        .security-spinner {
-          width: 20px;
-          height: 20px;
-          border: 2.5px solid rgba(255,255,255,0.3);
-          border-top-color: #fff;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
         }
 
         .security-support-footer {

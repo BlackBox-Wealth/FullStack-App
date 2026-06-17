@@ -1,4 +1,5 @@
 """Payment routes with OTP verification."""
+import asyncio
 import random
 import string
 from datetime import datetime
@@ -6,13 +7,17 @@ from fastapi import APIRouter, HTTPException, Depends
 from bson import ObjectId
 from app.core.database import get_database
 from app.core.redis_client import get_redis
-from app.core.security import get_current_user
+from app.core.security import get_current_user, require_kyc
 from app.core.kafka_service import kafka_service
 from app.core.config import settings
 from app.services.email_service import email_service
 from app.services.sms_service import sms_service
 from app.helper.utils import encrypt_user_data, decrypt_user_data, encrypt_update_fields
 from app.services.deterministic_hash import generate_deterministic_hash
+from app.services.budget_service import budget_service
+from app.services.credit_score_service import update_user_credit_score
+from app.services.firebase_service import send_payment_approval_notification
+from pydantic import BaseModel
 from logifyx import Logifyx
 
 log = Logifyx(
@@ -24,10 +29,121 @@ from app.models.alert import AlertType
 router = APIRouter(prefix="/payments", tags=["Payments"])
 
 
+class PaymentApprovalRequest(BaseModel):
+    approved: bool
+
+
+async def _complete_payment(db, payment: dict, payment_id: str, user_id: str, current_user: dict) -> dict:
+    """Debit/credit balances, create transaction records, publish events. Returns {budget_alert}."""
+    amount = payment["amount"]
+
+    from_account_doc = await db.accounts.find_one({"_id": ObjectId(payment["from_account_id"])})
+    to_account_doc = await db.accounts.find_one({"_id": ObjectId(payment["to_account_id"])})
+    from_account = decrypt_user_data(from_account_doc) if from_account_doc else None
+    to_account = decrypt_user_data(to_account_doc) if to_account_doc else None
+
+    if not from_account or not to_account:
+        raise HTTPException(status_code=404, detail="Payment account not found")
+
+    from_balance = float(from_account.get("balance", 0))
+    to_balance = float(to_account.get("balance", 0))
+
+    if from_balance < amount:
+        raise HTTPException(status_code=400, detail="Insufficient balance")
+
+    from_update = encrypt_update_fields({"balance": from_balance - amount, "updated_at": datetime.utcnow()})
+    to_update = encrypt_update_fields({"balance": to_balance + amount, "updated_at": datetime.utcnow()})
+    await db.accounts.update_one({"_id": ObjectId(payment["from_account_id"])}, {"$set": from_update})
+    await db.accounts.update_one({"_id": ObjectId(payment["to_account_id"])}, {"$set": to_update})
+    log.debug(f"Balance debit/credit done: payment={payment_id}, amount=₹{amount}")
+
+    budget_alert = await budget_service.check_budget_breach(user_id, "transfer", amount)
+
+    debit_txn = {
+        "account_id": payment["from_account_id"], "user_id": user_id,
+        "amount": amount, "transaction_type": "debit", "category": "transfer",
+        "description": f"Payment: {payment.get('description', '')}", "status": "completed",
+        "risk_score": 0.0, "budget_alert": budget_alert, "payment_id": payment_id,
+        "created_at": datetime.utcnow(),
+    }
+    credit_txn = {
+        "account_id": payment["to_account_id"], "user_id": payment.get("to_user_id", ""),
+        "amount": amount, "transaction_type": "credit", "category": "transfer",
+        "description": f"Received payment: {payment.get('description', '')}", "status": "completed",
+        "risk_score": 0.0, "payment_id": payment_id, "created_at": datetime.utcnow(),
+    }
+    await db.transactions.insert_many([encrypt_user_data(debit_txn), encrypt_user_data(credit_txn)])
+    log.info(f"Transaction records created for payment={payment_id}")
+
+    payment_update = encrypt_update_fields({"status": "completed", "completed_at": datetime.utcnow()})
+    await db.payments.update_one({"_id": ObjectId(payment_id)}, {"$set": payment_update})
+
+    # Risk assessment
+    account_age_days = (datetime.utcnow() - current_user.get("created_at", datetime.utcnow())).days
+    sim_risk = payment.get("sim_binding_risk", 0.0)
+    risk_score = 0.0
+    if amount > 500000:
+        risk_score += 0.35
+    elif amount > 100000:
+        risk_score += 0.15
+    if account_age_days < 7:
+        risk_score += 0.3
+    elif account_age_days < 30:
+        risk_score += 0.1
+    risk_score = min(risk_score + sim_risk, 1.0)
+
+    if risk_score > 0.6:
+        log.warning(f"HIGH RISK PAYMENT: payment={payment_id}, risk={risk_score:.3f}, amount=₹{amount}")
+        alert_doc = {
+            "user_id": user_id,
+            "alert_type": AlertType.HIGH_RISK_PAYMENT.value,
+            "risk_score": round(risk_score, 3),
+            "reason": f"High-risk payment: ₹{amount:,.0f}, account age {account_age_days}d, SIM risk {sim_risk:.1%}",
+            "payment_id": payment_id, "amount": amount, "is_read": False,
+            "created_at": datetime.utcnow(),
+        }
+        await db.alerts.insert_one(encrypt_user_data(alert_doc))
+        try:
+            asyncio.create_task(email_service.send_fraud_alert(
+                to_email=current_user["email"], amount=amount,
+                recipient=payment.get("to_account_number", "Unknown")[-4:],
+                risk_score=risk_score,
+                risk_factors=[f"Amount: ₹{amount:,.0f}", f"Account age: {account_age_days}d", f"SIM risk: {sim_risk:.1%}"]
+            ))
+        except Exception as e:
+            log.error(f"Failed to send fraud alert email: {e}")
+
+    await kafka_service.publish("transactions.created", {"payment_id": payment_id, "amount": amount, "status": "completed"})
+    await kafka_service.publish("notifications.send", {"user_id": user_id, "type": "payment_completed", "message": f"Payment of ₹{amount} completed successfully"})
+
+    asyncio.create_task(update_user_credit_score(db, user_id))
+    if payment.get("to_user_id") and payment.get("to_user_id") != user_id:
+        asyncio.create_task(update_user_credit_score(db, payment["to_user_id"]))
+
+    try:
+        from_acc = decrypt_user_data(from_account_doc) if from_account_doc else None
+        if from_acc:
+            await sms_service.send_transaction_sms(
+                current_user["phone"], current_user["full_name"],
+                f"••{from_acc['account_number'][-4:]}", amount, "debit",
+                current_user["full_name"], payment.get("to_account_number", "Recipient")
+            )
+    except Exception as e:
+        log.error(f"Failed to send payment completion SMS: {e}")
+
+    log.info(f"Payment completed: payment={payment_id}, amount=₹{amount}")
+    return {"budget_alert": budget_alert}
+
+
 @router.post("/initiate")
-async def initiate_payment(data: PaymentInitiate, current_user: dict = Depends(get_current_user)):
+async def initiate_payment(data: PaymentInitiate, current_user: dict = Depends(require_kyc)):
     user_id = str(current_user["_id"])
-    log.info(f"Payment initiation: user={user_id}, from={data.from_account_id}, to={data.to_account_number}, amount=₹{data.amount}")
+    
+    # Determine payment mode
+    payment_mode = "upi" if data.to_vpa else "account"
+    destination = data.to_vpa if data.to_vpa else data.to_account_number
+    
+    log.info(f"Payment initiation: user={user_id}, from={data.from_account_id}, to={destination}, mode={payment_mode}, amount=₹{data.amount}")
     db = get_database()
 
     # Verify source account
@@ -46,22 +162,96 @@ async def initiate_payment(data: PaymentInitiate, current_user: dict = Depends(g
         log.warning(f"Payment failed: insufficient balance. Required=₹{data.amount}, available=₹{from_account['balance']}")
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
-    # Verify destination account
-    to_account_hash = generate_deterministic_hash(data.to_account_number)
-    to_account = await db.accounts.find_one({"hashed_account_number": to_account_hash})
-    to_account = decrypt_user_data(to_account) if to_account else None
-    if not to_account:
-        log.warning(f"Payment failed: destination account={data.to_account_number} not found")
-        raise HTTPException(status_code=404, detail="Destination account not found")
+    # Check family spending limit (if applicable)
+    family_member = await db.family_members.find_one({
+        "user_id": user_id,
+        "status": "active"
+    })
+    
+    if family_member and family_member.get("spending_limit"):
+        spending_limit = family_member["spending_limit"]
+        
+        if data.amount > spending_limit:
+            log.warning(f"⚠️ Spending limit exceeded in payment: user={user_id}, amount=₹{data.amount}, limit=₹{spending_limit}")
+            
+            # Create alert for family head
+            family_id = family_member["family_id"]
+            family = await db.families.find_one({"_id": ObjectId(family_id)})
+            
+            if family:
+                head_user_id = family["head_user_id"]
+                alert_doc = {
+                    "user_id": head_user_id,
+                    "alert_type": "spending_limit_exceeded",
+                    "reason": f"Family member exceeded spending limit in payment: ₹{data.amount:,.0f} (limit: ₹{spending_limit:,.0f})",
+                    "member_user_id": user_id,
+                    "amount": data.amount,
+                    "spending_limit": spending_limit,
+                    "is_read": False,
+                    "created_at": datetime.utcnow(),
+                }
+                await db.alerts.insert_one(encrypt_user_data(alert_doc))
+                log.info(f"Alert created for family head: head={head_user_id}, member={user_id}")
+                
+                # Publish notification event
+                await kafka_service.publish("notifications.send", {
+                    "user_id": head_user_id,
+                    "type": "spending_limit_exceeded",
+                    "message": f"Family member exceeded spending limit in payment: ₹{data.amount:,.0f}"
+                })
 
-    log.info(f"Payment validation passed: from={data.from_account_id} → to={data.to_account_number}")
+    # Resolve destination account based on payment mode
+    to_account = None
+    to_account_number = None
+    
+    if payment_mode == "upi":
+        # UPI VPA lookup - Simple mapping: vpa format is username@wealthvault
+        vpa_username = data.to_vpa.split('@')[0] if '@' in data.to_vpa else data.to_vpa
+        
+        # Try to find user by email matching VPA pattern
+        vpa_email_pattern = f"{vpa_username}@"
+        to_user = await db.users.find_one({"email": {"$regex": f"^{vpa_username}@", "$options": "i"}})
+        
+        if to_user:
+            to_user = decrypt_user_data(to_user)
+            to_user_id = str(to_user["_id"])
+            
+            # Find primary account for this user
+            to_account = await db.accounts.find_one({
+                "user_id": to_user_id,
+                "is_external": False,
+                "status": "active"
+            })
+            to_account = decrypt_user_data(to_account) if to_account else None
+            
+            if to_account:
+                to_account_number = to_account["account_number"]
+                log.info(f"UPI VPA resolved: {data.to_vpa} → user={to_user_id}, account={to_account_number}")
+        
+        if not to_account:
+            log.warning(f"Payment failed: UPI VPA={data.to_vpa} could not be resolved")
+            raise HTTPException(status_code=404, detail="UPI VPA not found or no active account linked")
+    else:
+        # Traditional account number lookup
+        to_account_number = data.to_account_number
+        to_account_hash = generate_deterministic_hash(to_account_number)
+        to_account = await db.accounts.find_one({"hashed_account_number": to_account_hash})
+        to_account = decrypt_user_data(to_account) if to_account else None
+        
+        if not to_account:
+            log.warning(f"Payment failed: destination account={to_account_number} not found")
+            raise HTTPException(status_code=404, detail="Destination account not found")
+
+    log.info(f"Payment validation passed: from={data.from_account_id} → to={to_account_number} (mode={payment_mode})")
 
     # Create pending payment
     payment_doc = {
         "user_id": user_id,
         "from_account_id": data.from_account_id,
         "to_account_id": str(to_account["_id"]),
-        "to_account_number": data.to_account_number,
+        "to_account_number": to_account_number,
+        "payment_mode": payment_mode,
+        "to_vpa": data.to_vpa if payment_mode == "upi" else None,
         "amount": data.amount,
         "description": data.description,
         "status": "pending_otp",
@@ -125,7 +315,10 @@ async def initiate_payment(data: PaymentInitiate, current_user: dict = Depends(g
             log.error(f"Failed to send payment verification SMS: {e}")
     else:
         try:
-            await email_service.send_verification_email(current_user["email"], otp)
+            await kafka_service.publish("email.otpVerification", {
+                "user_email": current_user["email"],
+                "otp_code": otp,
+            })
         except Exception as e:
             log.error(f"Failed to send payment verification email: {e}")
 
@@ -137,7 +330,7 @@ async def initiate_payment(data: PaymentInitiate, current_user: dict = Depends(g
 
 
 @router.post("/verify")
-async def verify_payment(data: OTPVerify, current_user: dict = Depends(get_current_user)):
+async def verify_payment(data: OTPVerify, current_user: dict = Depends(require_kyc)):
     user_id = str(current_user["_id"])
     log.info(f"Payment OTP verification: payment={data.payment_id}, user={user_id}")
     db = get_database()
@@ -154,7 +347,9 @@ async def verify_payment(data: OTPVerify, current_user: dict = Depends(get_curre
         stored_otp = await redis.get(f"payment_otp:{data.payment_id}")
     else:
         otp_doc = await db.payment_otps.find_one({"payment_id": data.payment_id})
-        stored_otp = otp_doc["otp"] if otp_doc else None
+        if otp_doc:
+            otp_doc = decrypt_user_data(otp_doc)
+        stored_otp = otp_doc.get("otp") if otp_doc else None
    
     if not stored_otp or stored_otp != data.otp:
         # Track OTP failure attempts
@@ -204,130 +399,161 @@ async def verify_payment(data: OTPVerify, current_user: dict = Depends(get_curre
 
     # Process payment
     amount = payment["amount"]
-    log.info(f"Processing payment: payment={data.payment_id}, amount=₹{amount}")
-
-    # Debit source
-    await db.accounts.update_one({"_id": ObjectId(payment["from_account_id"])}, {"$inc": {"balance": -amount}})
-    log.debug(f"Debited ₹{amount} from account={payment['from_account_id']}")
-
-    # Credit destination
-    await db.accounts.update_one({"_id": ObjectId(payment["to_account_id"])}, {"$inc": {"balance": amount}})
-    log.debug(f"Credited ₹{amount} to account={payment['to_account_id']}")
-
-    # Create transactions
-    debit_txn = {
-        "account_id": payment["from_account_id"], "user_id": payment["user_id"],
-        "amount": amount, "transaction_type": "debit", "category": "transfer",
-        "description": f"Payment: {payment.get('description', '')}", "status": "completed",
-        "risk_score": 0.0, "payment_id": data.payment_id, "created_at": datetime.utcnow(),
-    }
-    credit_txn = {
-        "account_id": payment["to_account_id"], "user_id": payment.get("to_user_id", ""),
-        "amount": amount, "transaction_type": "credit", "category": "transfer",
-        "description": f"Received payment: {payment.get('description', '')}", "status": "completed",
-        "risk_score": 0.0, "payment_id": data.payment_id, "created_at": datetime.utcnow(),
-    }
-    await db.transactions.insert_many([
-        encrypt_user_data(debit_txn),
-        encrypt_user_data(credit_txn),
-    ])
-    log.info(f"Transaction records created for payment={data.payment_id}")
-
-    # Update payment status
-    payment_update_fields = encrypt_update_fields({"status": "completed", "completed_at": datetime.utcnow()})
-    await db.payments.update_one(
-        {"_id": ObjectId(data.payment_id)},
-        {"$set": payment_update_fields}
-    )
 
     # Clean up OTP
     if redis:
         await redis.delete(f"payment_otp:{data.payment_id}")
         log.debug(f"Payment OTP cleaned from Redis: payment={data.payment_id}")
-    
-    #  Create alert if high risk
-    account_age_days = (datetime.utcnow() - current_user.get("created_at", datetime.utcnow())).days
-    risk_score = 0.0
-    
-    # Amount-based risk
-    if amount > 500000:
-        risk_score += 0.35
-    elif amount > 100000:
-        risk_score += 0.15
-    
-    # Account age risk
-    if account_age_days < 7:
-        risk_score += 0.3
-    elif account_age_days < 30:
-        risk_score += 0.1
-    
-    # SIM binding risk (already calculated during initiation)
-    sim_risk = payment.get("sim_binding_risk", 0.0)
-    risk_score += sim_risk
-    
-    risk_score = min(risk_score, 1.0)
-    
-    # If HIGH RISK, create alert and send email
-    if risk_score > 0.6:
-        log.warning(f"🚨 HIGH RISK PAYMENT: payment={data.payment_id}, risk={risk_score:.3f}, amount=₹{amount}")
-        
-        alert_doc = {
-            "user_id": user_id,
-            "alert_type": AlertType.HIGH_RISK_PAYMENT.value,
-            "risk_score": round(risk_score, 3),
-            "reason": f"High-risk payment detected: Amount ₹{amount:,.0f}, Account age {account_age_days} days, SIM risk {sim_risk:.1%}",
+
+    # --- Large payment: hold for Flutter app approval ---
+    if amount >= settings.LARGE_PAYMENT_THRESHOLD:
+        log.info(f"Large payment (₹{amount} >= ₹{settings.LARGE_PAYMENT_THRESHOLD}): routing to Flutter approval, payment={data.payment_id}")
+        status_update = encrypt_update_fields({"status": "pending_app_approval", "updated_at": datetime.utcnow()})
+        await db.payments.update_one({"_id": ObjectId(data.payment_id)}, {"$set": status_update})
+
+        # Fetch Flutter FCM token and push notification
+        user_doc = await db.users.find_one({"_id": current_user["_id"]})
+        if user_doc:
+            user_doc = decrypt_user_data(user_doc)
+            fcm_token = user_doc.get("fcm_token")
+            if fcm_token:
+                asyncio.create_task(send_payment_approval_notification(fcm_token, data.payment_id, amount))
+            else:
+                log.warning(f"No Flutter FCM token for user={user_id} — push skipped")
+
+        return {
             "payment_id": data.payment_id,
-            "amount": amount,
-            "is_read": False,
-            "created_at": datetime.utcnow(),
+            "status": "pending_app_approval",
+            "requires_app_approval": True,
+            "message": f"Payment of ₹{amount:,.0f} requires approval from your mobile app. A notification has been sent.",
         }
-        await db.alerts.insert_one(encrypt_user_data(alert_doc))
-        log.info(f"Alert created for high-risk payment: payment={data.payment_id}")
-        
-        # Send fraud alert email
-        try:
-            from_acc = await db.accounts.find_one({"_id": ObjectId(payment["from_account_id"])})
-            from_acc = decrypt_user_data(from_acc) if from_acc else None
-            
-            await email_service.send_fraud_alert(
-                to_email=current_user["email"],
-                amount=amount,
-                recipient=payment.get("to_account_number", "Unknown")[-4:],
-                risk_score=risk_score,
-                risk_factors=[
-                    f"Amount: ₹{amount:,.0f}",
-                    f"Account age: {account_age_days} days",
-                    f"SIM binding risk: {sim_risk:.1%}"
-                ]
-            )
-            log.info(f"Fraud alert email sent: user={user_id}")
-        except Exception as e:
-            log.error(f"Failed to send fraud alert email: {e}")
 
-    # Publish events
-    await kafka_service.publish("transactions.created", {"payment_id": data.payment_id, "amount": amount, "status": "completed"})
-    await kafka_service.publish("notifications.send", {"user_id": payment["user_id"], "type": "payment_completed", "message": f"Payment of ₹{amount} completed successfully"})
+    # --- Normal payment (< ₹1L): complete immediately ---
+    result = await _complete_payment(db, payment, data.payment_id, user_id, current_user)
+    return {
+        "message": "Payment completed successfully",
+        "payment_id": data.payment_id,
+        "budget_alert": result["budget_alert"],
+    }
+
+
+@router.post("/{payment_id}/respond")
+async def respond_to_payment(
+    payment_id: str,
+    data: PaymentApprovalRequest,
+    current_user: dict = Depends(require_kyc),
+):
+    """
+    Called by the Flutter app when the user taps YES or NO on the approval notification.
+    YES  → debit/credit balances, status = completed
+    NO   → status = blocked, no money moved
+    """
+    user_id = str(current_user["_id"])
+    log.info(f"Flutter approval response: payment={payment_id}, user={user_id}, approved={data.approved}")
+    db = get_database()
+
+    payment = await db.payments.find_one({"_id": ObjectId(payment_id)})
+    payment = decrypt_user_data(payment) if payment else None
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    if payment["user_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    if payment["status"] != "pending_app_approval":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Payment is not awaiting approval (status: {payment['status']})"
+        )
+
+    if not data.approved:
+        status_update = encrypt_update_fields({"status": "blocked", "blocked_at": datetime.utcnow()})
+        await db.payments.update_one({"_id": ObjectId(payment_id)}, {"$set": status_update})
+        await kafka_service.publish("notifications.send", {
+            "user_id": user_id, "type": "payment_rejected",
+            "message": f"Payment of ₹{payment['amount']:,.0f} was rejected.",
+        })
+        log.info(f"Payment rejected via Flutter: payment={payment_id}, amount=₹{payment['amount']}")
+        return {"message": "Payment rejected", "payment_id": payment_id, "status": "blocked"}
+
+    result = await _complete_payment(db, payment, payment_id, user_id, current_user)
+    log.info(f"Payment approved via Flutter: payment={payment_id}, amount=₹{payment['amount']}")
+    return {
+        "message": "Payment approved and completed",
+        "payment_id": payment_id,
+        "budget_alert": result["budget_alert"],
+    }
+
+
+@router.post("/{payment_id}/resend")
+async def resend_payment_otp(payment_id: str, otp_channel: str = "email", current_user: dict = Depends(get_current_user)):
+    user_id = str(current_user["_id"])
+    log.info(f"OTP resend request: payment={payment_id}, user={user_id}, channel={otp_channel}")
+    db = get_database()
+    redis = get_redis()
     
-    # Send Transaction SMS Alert to Sender
-    try:
-        from_acc = await db.accounts.find_one({"_id": ObjectId(payment["from_account_id"])})
-        from_acc = decrypt_user_data(from_acc) if from_acc else None
-        if from_acc:
-            to_label = payment.get("to_account_number", "Recipient")
-            await sms_service.send_transaction_sms(
-                current_user["phone"],
-                current_user["full_name"],
-                f"••{from_acc['account_number'][-4:]}",
-                amount,
-                "debit",
-                current_user["full_name"],
-                to_label
-            )
-    except Exception as e:
-        log.error(f"Failed to send payment completion SMS: {e}")
+    # 1. Verify payment exists and belongs to user
+    payment = await db.payments.find_one({"_id": ObjectId(payment_id)})
+    if not payment:
+         log.warning(f"Resend failed: payment={payment_id} not found")
+         raise HTTPException(status_code=404, detail="Payment not found")
+    
+    payment = decrypt_user_data(payment)
+    if payment["user_id"] != user_id:
+        log.warning(f"Resend denied: user={user_id} does not own payment={payment_id}")
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    if payment["status"] != "pending_otp":
+        log.warning(f"Resend failed: payment={payment_id} is in status {payment['status']}, not pending_otp")
+        raise HTTPException(status_code=400, detail="Payment is not in pending OTP state")
 
-    log.info(f"✅ Payment completed successfully: payment={data.payment_id}, amount=₹{amount}")
-    return {"message": "Payment completed successfully", "payment_id": data.payment_id}
+    # 2. Check Resend Count (Max 3)
+    resend_count = 0
+    if redis:
+        resend_key = f"otp_resend_count:{payment_id}"
+        resend_count = int(await redis.get(resend_key) or 0)
+        
+        if resend_count >= 3:
+            log.warning(f"Resend limit reached: payment={payment_id}, user={user_id}")
+            raise HTTPException(status_code=429, detail="Maximum OTP resend attempts (3) reached.")
+    
+    # 3. Generate and Store New OTP
+    otp = "".join(random.choices(string.digits, k=6))
+    if redis:
+        await redis.setex(f"payment_otp:{payment_id}", settings.OTP_EXPIRE_SECONDS, otp)
+        await redis.incr(f"otp_resend_count:{payment_id}")
+        await redis.expire(f"otp_resend_count:{payment_id}", 3600)  # Keep count for 1 hour
+        log.info(f"New OTP stored in Redis for resend: payment={payment_id}")
+    else:
+        # MongoDB fallback
+        otp_update_fields = encrypt_update_fields({"otp": otp, "created_at": datetime.utcnow()})
+        await db.payment_otps.update_one(
+            {"payment_id": payment_id},
+            {"$set": otp_update_fields},
+            upsert=True
+        )
+        log.info(f"New OTP stored in MongoDB for resend: payment={payment_id}")
+
+    # 4. Send OTP
+    if otp_channel == "sms":
+        try:
+            await sms_service.send_otp(current_user["phone"], otp)
+        except Exception as e:
+            log.error(f"Failed to resend payment verification SMS: {e}")
+            raise HTTPException(status_code=500, detail="Failed to send SMS")
+    else:
+        try:
+            await kafka_service.publish("email.otpVerification", {
+                "user_email": current_user["email"],
+                "otp_code": otp
+            })
+        except Exception as e:
+            log.error(f"Failed to resend payment verification email: {e}")
+            raise HTTPException(status_code=500, detail="Failed to send email")
+
+    return {
+        "message": f"OTP resent successfully to your registered {otp_channel}",
+        "resend_count": resend_count + 1,
+        "otp_debug": otp if settings.DEBUG else None
+    }
 
 
 @router.get("/")
@@ -362,3 +588,31 @@ async def get_payment(payment_id: str, current_user: dict = Depends(get_current_
         payment["id"] = str(payment["_id"])
         del payment["_id"]
     return payment
+
+
+@router.get("/qr/generate")
+async def generate_payment_qr(amount: float, description: str = "", current_user: dict = Depends(get_current_user)):
+    """Generate UPI QR code data for receiving payments."""
+    user_id = str(current_user["_id"])
+    user_email = current_user["email"]
+    
+    # Generates VPA from user email (username@wealthvault)
+    vpa_username = user_email.split('@')[0]
+    vpa = f"{vpa_username}@wealthvault"
+    
+    log.info(f"QR code generation: user={user_id}, vpa={vpa}, amount=₹{amount}")
+    
+    # Generates UPI payment string
+    qr_data = f"upi://pay?pa={vpa}&pn={current_user['full_name']}&am={amount}"
+    if description:
+        qr_data += f"&tn={description}"
+    
+    log.info(f"QR code generated: {qr_data}")
+    
+    return {
+        "qr_data": qr_data,
+        "vpa": vpa,
+        "amount": amount,
+        "payee_name": current_user["full_name"],
+        "description": description
+    }

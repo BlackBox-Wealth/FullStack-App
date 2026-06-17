@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { adminAPI } from '../api';
+import PageLoader from '../components/animation/PageLoader';
 
 const AdminFraud: React.FC = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
@@ -20,30 +21,30 @@ const AdminFraud: React.FC = () => {
     loadAlerts();
   };
 
-  if (loading) return <div className="loading-spinner"><div className="spinner" /></div>;
+  if (loading) return <PageLoader label="Loading fraud alerts" />;
 
   return (
     <div>
       <div className="page-header">
         <div>
-          <h2>🚨 Fraud Alerts</h2>
+          <h2>Fraud Alerts</h2>
           <p>{alerts.filter(a => a.status === 'pending_review').length} pending review</p>
         </div>
       </div>
 
       <div className="stats-grid" style={{ marginBottom: 24 }}>
         <div className="stat-card">
-          <div className="stat-icon red">🚨</div>
+          <div className="stat-icon red">ALR</div>
           <div className="stat-value">{alerts.filter(a => a.status === 'pending_review').length}</div>
           <div className="stat-label">Pending Review</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon orange">⚠️</div>
+          <div className="stat-icon orange">RISK</div>
           <div className="stat-value">{alerts.filter(a => a.status === 'confirmed').length}</div>
           <div className="stat-label">Confirmed Fraud</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon green">✅</div>
+          <div className="stat-icon green">OK</div>
           <div className="stat-value">{alerts.filter(a => a.status === 'false_positive').length}</div>
           <div className="stat-label">False Positives</div>
         </div>
@@ -88,7 +89,7 @@ const AdminFraud: React.FC = () => {
         {alerts.length === 0 && (
           <div className="card">
             <div className="empty-state">
-              <div className="icon">🎉</div>
+              <div className="icon">All Clear</div>
               <p>No fraud alerts. Everything looks clean!</p>
             </div>
           </div>

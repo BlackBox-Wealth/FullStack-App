@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, model_validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
@@ -19,6 +19,9 @@ class AccountStatus(str, Enum):
 
 
 class AccountCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    account_number: str = Field(..., min_length=8, max_length=18, pattern=r"^\d+$")
     account_type: AccountType = AccountType.SAVINGS
     bank_name: str = "WealthVault Bank"
     currency: str = "INR"
@@ -30,6 +33,7 @@ class LinkExternalAccount(BaseModel):
     account_number: str
     ifsc_code: str
     account_holder_name: str
+    balance: float = 0.0
 
 
 class AccountResponse(BaseModel):
@@ -84,15 +88,24 @@ class TransactionResponse(BaseModel):
     description: str
     status: str
     risk_score: float = 0.0
+    budget_alert: Optional[str] = None
     created_at: Optional[str] = None
 
 
 class PaymentInitiate(BaseModel):
     from_account_id: str
-    to_account_number: str
+    to_account_number: Optional[str] = None  # Traditional account number
+    to_vpa: Optional[str] = None  # UPI VPA (e.g., user@wealthvault)
     amount: float = Field(..., gt=0)
     description: str = ""
     otp_channel: str = "email"  # "email" or "sms"
+
+    @model_validator(mode="after")
+    def validate_destination(self):
+        # Require at least one destination, independent of field validation order.
+        if not self.to_account_number and not self.to_vpa:
+            raise ValueError('Either to_account_number or to_vpa must be provided')
+        return self
 
 
 class OTPVerify(BaseModel):

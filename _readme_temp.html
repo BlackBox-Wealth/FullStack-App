@@ -1,0 +1,3395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@page {
+    size: A4;
+    margin: 20mm 18mm 20mm 18mm;
+    @top-center {
+        content: "WealthVault — PSB Banking Platform";
+        font-size: 9pt;
+        color: #6b7280;
+        font-family: 'Inter', sans-serif;
+    }
+    @bottom-center {
+        content: "Page " counter(page) " of " counter(pages);
+        font-size: 9pt;
+        color: #6b7280;
+        font-family: 'Inter', sans-serif;
+    }
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.6;
+    color: #1f2937;
+    background: white;
+}
+
+h1 {
+    font-size: 22pt;
+    font-weight: 700;
+    color: #1e3a5f;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 8px;
+    margin-top: 0;
+    margin-bottom: 16px;
+    page-break-before: avoid;
+}
+
+h2 {
+    font-size: 14pt;
+    font-weight: 600;
+    color: #1e40af;
+    border-bottom: 1px solid #bfdbfe;
+    padding-bottom: 4px;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    page-break-after: avoid;
+}
+
+h3 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #1d4ed8;
+    margin-top: 16px;
+    margin-bottom: 6px;
+    page-break-after: avoid;
+}
+
+h4 {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #374151;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+p {
+    margin: 0 0 8px 0;
+    orphans: 3;
+    widows: 3;
+}
+
+code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 8pt;
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+pre {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 7.5pt;
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    margin: 10px 0;
+    line-height: 1.5;
+    page-break-inside: avoid;
+}
+
+pre code {
+    background: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: inherit;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+}
+
+thead tr {
+    background: #1e3a5f;
+    color: white;
+}
+
+thead th {
+    padding: 6px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 8pt;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tbody tr:nth-child(odd) {
+    background: white;
+}
+
+tbody td {
+    padding: 5px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: top;
+}
+
+ul, ol {
+    padding-left: 20px;
+    margin: 6px 0 8px 0;
+}
+
+li {
+    margin-bottom: 3px;
+}
+
+blockquote {
+    border-left: 4px solid #2563eb;
+    margin: 10px 0;
+    padding: 8px 14px;
+    background: #eff6ff;
+    color: #1e40af;
+    font-style: italic;
+    border-radius: 0 4px 4px 0;
+}
+
+a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #e5e7eb;
+    margin: 20px 0;
+}
+
+.toc {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+}
+
+</style>
+</head>
+<body>
+<h1 id="wealthvault-punjab-sind-banks-ai-powered-banking-platform">WealthVault — Punjab &amp; Sind Bank's AI-Powered Banking Platform</h1>
+<blockquote>
+<p><strong>Hackathon Project | Full-Stack Banking &amp; Wealth Management Platform</strong><br />
+Built for PSB (Punjab &amp; Sind Bank) with production-grade security, AI/ML features, and a compliance simulation lab.</p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><a href="#1-project-overview">Project Overview</a></li>
+<li><a href="#2-feature-set">Feature Set</a></li>
+<li><a href="#3-system-architecture">System Architecture</a></li>
+<li><a href="#4-infrastructure--resources">Infrastructure &amp; Resources</a></li>
+<li><a href="#5-technology-stack">Technology Stack</a></li>
+<li><a href="#6-security-architecture">Security Architecture</a></li>
+<li><a href="#7-all-api-endpoints">All API Endpoints</a></li>
+<li><a href="#8-user-flow-diagrams">User Flow Diagrams</a></li>
+<li><a href="#9-ml--ai-pipeline">ML / AI Pipeline</a></li>
+<li><a href="#10-compliance-ai-rag">Compliance AI (RAG)</a></li>
+<li><a href="#11-sentinel-simulation-lab">Sentinel Simulation Lab</a></li>
+<li><a href="#12-deployment-guide">Deployment Guide</a></li>
+<li><a href="#13-development-timeline-marjun-2026">Development Timeline (Mar–Jun 2026)</a></li>
+<li><a href="#14-environment-variables">Environment Variables</a></li>
+<li><a href="#15-project-structure">Project Structure</a></li>
+</ol>
+<hr />
+<h2 id="1-project-overview">1. Project Overview</h2>
+<p><strong>WealthVault</strong> is a full-stack, production-grade digital banking and wealth management platform developed for the PSB Hackathon. It combines:</p>
+<ul>
+<li>A <strong>customer-facing banking app</strong> (accounts, payments, investments, loans, family banking)</li>
+<li>A <strong>compliance AI assistant</strong> (RAG-based, grounded in RBI &amp; PSB regulations)</li>
+<li>A <strong>security simulation lab</strong> (Sentinel) for training bank employees against phishing, social engineering, and insider threats</li>
+<li>An <strong>ML microservice</strong> connected over gRPC for real-time fraud detection, behavior anomaly detection, cashflow forecasting, and personalized financial advice</li>
+</ul>
+<p>The system is designed around <strong>defense-in-depth</strong>: every layer (auth, data, transport, event stream, AI agent) has an independent security control.</p>
+<p>It is not a prototype of a single feature. It is a working system where parts interact: payments trigger fraud scoring, chatbot stress signals feed into risk vectors, KYC gates payment access, and admin actions write to an immutable audit log.</p>
+<hr />
+<h2 id="2-feature-set">2. Feature Set</h2>
+<h3 id="21-customer-banking">2.1 Customer Banking</h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Capabilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Multi-step registration (email OTP + phone OTP), login with CAPTCHA, JWT + refresh tokens, httpOnly cookies, Authorization header fallback</td>
+</tr>
+<tr>
+<td><strong>Accounts</strong></td>
+<td>Create savings/current accounts, link external bank accounts (Account Aggregator), freeze/unfreeze, delete</td>
+</tr>
+<tr>
+<td><strong>Transactions</strong></td>
+<td>Credit/debit transactions, spending analysis by category, statement download</td>
+</tr>
+<tr>
+<td><strong>Payments</strong></td>
+<td>UPI &amp; account-to-account transfers, OTP-verified payments, Firebase push approval for large payments (&gt;₹1L), payment history, UPI QR generation</td>
+</tr>
+<tr>
+<td><strong>Investments</strong></td>
+<td>Mutual funds, stocks, SIPs, investment goals with smart AI insights, portfolio view, live market data, financial news, first-time investor tips</td>
+</tr>
+<tr>
+<td><strong>Loans</strong></td>
+<td>Apply for loans, track loan status, admin approval/rejection workflow</td>
+</tr>
+<tr>
+<td><strong>Family Banking</strong></td>
+<td>Invite family members, set per-member spending limits, family dashboard</td>
+</tr>
+<tr>
+<td><strong>Asset Vault</strong></td>
+<td>Track physical and financial assets, compute total net worth</td>
+</tr>
+<tr>
+<td><strong>Budget Manager</strong></td>
+<td>Create spending budgets per category with real-time alerts</td>
+</tr>
+<tr>
+<td><strong>Credit Score</strong></td>
+<td>Live credit score computation (300–900) from account age, KYC status, balances, transactions, and loan history — evolves with inertia</td>
+</tr>
+<tr>
+<td><strong>Tax Optimizer</strong></td>
+<td>Tax summary derived from income and investment data</td>
+</tr>
+<tr>
+<td><strong>Risk Dashboard</strong></td>
+<td>Composite financial risk score for the user's profile</td>
+</tr>
+<tr>
+<td><strong>Sessions</strong></td>
+<td>View and revoke all active login sessions per device</td>
+</tr>
+<tr>
+<td><strong>Notifications</strong></td>
+<td>In-app alerts, fraud alerts, read/unread management, unified notification feed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-kyc-identity-verification">2.2 KYC &amp; Identity Verification</h3>
+<ul>
+<li>Aadhaar + PAN card OCR using Tesseract + OpenCV (Gaussian blur + Otsu thresholding)</li>
+<li>Google GenAI-assisted document understanding as primary extraction path</li>
+<li>Verhoeff checksum validation on Aadhaar numbers</li>
+<li>Fuzzy name match between Aadhaar and PAN (≥80% required)</li>
+<li>DOB cross-validation between documents</li>
+<li>Confidence scoring (0–100%) with categorized fraud flags (CRITICAL / ERROR / WARNING)</li>
+<li>Document field masking before any storage</li>
+</ul>
+<h3 id="23-ai-agents">2.3 AI Agents</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Wealth Advisor</strong></td>
+<td>Personalized financial advice using real account/transaction/investment data. PII stripped before LLM call. Encrypted request/response via Fernet symmetric encryption.</td>
+</tr>
+<tr>
+<td><strong>Wealth Teacher</strong></td>
+<td>Delivers daily financial literacy lessons tailored to the user's financial profile and investment maturity.</td>
+</tr>
+</tbody>
+</table>
+<p>Both agents use <code>anonymize_pii()</code> to strip name, email, phone, and account number before sending any data to Groq LLM.</p>
+<h3 id="24-compliance-ai">2.4 Compliance AI</h3>
+<ul>
+<li>RAG (Retrieval-Augmented Generation) pipeline grounded in RBI KYC Master Directions and PSB policy documents</li>
+<li>FAISS vector store + BM25 hybrid retriever with RRF score fusion</li>
+<li>Groq LLaMA-3 70B for answer generation (strict "answer only from context" prompt)</li>
+<li>Rule-based compliance checker: Compliant / Risky / Non-Compliant</li>
+<li>Twilio voice call integration: inbound call → speech-to-text → RAG → TTS response</li>
+<li>PII-masked audit log (JSONL) — never logs raw audio</li>
+<li>Rate limiting: 30 text queries/min, 10 voice queries/min</li>
+<li>Multi-language support: English, Hindi, Punjabi</li>
+</ul>
+<h3 id="25-sentinel-simulation-lab">2.5 Sentinel Simulation Lab</h3>
+<ul>
+<li>Phishing email simulation campaigns targeting bank employees</li>
+<li>Social engineering and incident drill modules</li>
+<li>Employee portal (realistic mock banking intranet) serving as a honeypot</li>
+<li>Credential harvesting detection</li>
+<li>Real-time behavioral tracking (click, hover, scroll, read time, focus)</li>
+<li>Risk scoring and security certification management</li>
+<li>Super-admin dashboard with campaign analytics, leaderboards, and security posture reports</li>
+<li>OSINT scraper integration for employee exposure assessment</li>
+</ul>
+<h3 id="26-admin-dashboard">2.6 Admin Dashboard</h3>
+<ul>
+<li>User role management (customer → employee → relationship_manager → super_admin)</li>
+<li>KYC approval queue with escalation flow</li>
+<li>Loan approval/rejection</li>
+<li>Fraud alert resolution</li>
+<li>Insider threat scan (GraphSAGE GNN ML model)</li>
+<li>System-wide analytics</li>
+<li>Full audit log trail</li>
+<li>API performance metrics (20-minute sliding window via Redis sorted sets)</li>
+</ul>
+<hr />
+<h2 id="3-system-architecture">3. System Architecture</h2>
+<pre><code>┌────────────────────────────────────────────────────────────────────────┐
+│                            CLIENT LAYER                                │
+│                                                                        │
+│  ┌──────────────────────┐   ┌──────────────────────┐                  │
+│  │  React + Vite        │   │  Flutter Mobile App   │                  │
+│  │  (Customer Web UI)   │   │  (FCM Push Notifs)    │                  │
+│  │  Port 5173           │   │                       │                  │
+│  └──────────┬───────────┘   └───────────────────────┘                  │
+│             │                                                          │
+│  ┌──────────┴───────────┐   ┌──────────────────────┐                  │
+│  │  Sentinel Portal     │   │  Compliance AI UI    │                  │
+│  │  (Mock Bank Intranet)│   │  (Support Page)      │                  │
+│  │  Port 5174/5175      │   │                      │                  │
+│  └──────────┬───────────┘   └──────────┬───────────┘                  │
+└────────────────────────────────────────────────────────────────────────┘
+             │                           │
+             ▼                           ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                         API GATEWAY LAYER                              │
+│                                                                        │
+│  ┌─────────────────────────────┐   ┌──────────────────────────────┐   │
+│  │  FastAPI Main App (app.py)  │   │  FastAPI Compliance App      │   │
+│  │  Port 8000                  │   │  (compliance_app.py)         │   │
+│  │                             │   │  Port 8002                   │   │
+│  │  Middleware:                │   │                              │   │
+│  │  • CORS (origin allowlist)  │   │  • RAG Pipeline              │   │
+│  │  • Request ID (UUID8)       │   │  • FAISS Vector Store        │   │
+│  │  • Kafka perf publisher     │   │  • BM25 Hybrid Retriever     │   │
+│  │  • JWT Auth Guard           │   │  • Groq LLaMA-3 70B          │   │
+│  │  • KYC Guard (require_kyc)  │   │  • Twilio Voice              │   │
+│  │  • Role-Based Access        │   │  • Audit Log (JSONL)         │   │
+│  └──────────────┬──────────────┘   └──────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────────────┘
+                  │
+    ┌─────────────┼──────────────────────────────┐
+    │             │                              │
+    ▼             ▼                              ▼
+┌─────────┐  ┌──────────┐              ┌────────────────────────┐
+│ MongoDB │  │  Redis   │              │  ML Microservice       │
+│         │  │          │              │                        │
+│ • Users │  │ • Session│              │  gRPC Port 50051       │
+│ • Accts │  │   Cache  │              │  HTTP Fallback 8009    │
+│ • Txns  │  │ • OTP TTL│              │                        │
+│ • Loans │  │ • Perf   │              │  Models:               │
+│ • KYC   │  │   Metrics│              │  • RF + TF-IDF (M1)    │
+│ • Audit │  │   (ZSet) │              │  • BERT multilingual   │
+│ • Sims  │  │ • Rate   │              │  • Isolation Forest    │
+│ • Sess  │  │   Limits │              │  • LSTM Autoencoder    │
+│   ions  │  │ • Last   │              │  • GraphSAGE GNN       │
+│         │  │   Seen   │              │  • RiskMLP dual-head   │
+└─────────┘  └──────────┘              │  • ARIMA/RF Forecast   │
+                                       └────────────────────────┘
+                  │
+                  ▼
+          ┌──────────────┐
+          │  Apache Kafka │
+          │  Port 9092    │
+          │               │
+          │  Topics:      │
+          │  transactions │
+          │  payments     │
+          │  fraud.alerts │
+          │  user.activity│
+          │  notif.send   │
+          │  email.otp    │
+          │  sim.email    │
+          │  sys.perf     │
+          └──────────────┘
+
+  External Services:
+  ┌────────────────────────────────────────────────┐
+  │  Firebase FCM    — Push notifications (mobile) │
+  │  Twilio          — SMS OTP + voice calls       │
+  │  Cloudflare      — Turnstile CAPTCHA           │
+  │  Groq            — LLaMA-3 70B LLM inference   │
+  │  Google GenAI    — KYC document understanding  │
+  │  Marketstack     — Live stock market data      │
+  │  Alpha Vantage   — Financial data feed         │
+  │  Finnhub         — Market news                 │
+  │  NewsAPI         — Financial news              │
+  │  Gmail / SMTP    — Transactional emails        │
+  └────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="why-this-architecture">Why This Architecture?</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FastAPI</strong></td>
+<td>Async-first, automatic OpenAPI docs, Pydantic v2 validation, highest Python HTTP throughput</td>
+</tr>
+<tr>
+<td><strong>MongoDB</strong></td>
+<td>Flexible schema for diverse financial documents (accounts, KYC, simulations have different shapes); TTL indexes for sessions and invitations</td>
+</tr>
+<tr>
+<td><strong>Redis</strong></td>
+<td>Sub-millisecond session validation on every request; OTP TTL enforcement; 20-minute performance metrics sliding window via sorted sets</td>
+</tr>
+<tr>
+<td><strong>Kafka</strong></td>
+<td>Decouples OTP email delivery, simulation emails, fraud alerts from the request path — no timeout risk; event replay for audit trail</td>
+</tr>
+<tr>
+<td><strong>Two FastAPI apps</strong></td>
+<td>Compliance AI is a separate domain with different dependencies (FAISS, Groq, Twilio) and rate limits — isolation prevents a compliance overload from affecting banking endpoints</td>
+</tr>
+<tr>
+<td><strong>gRPC for ML</strong></td>
+<td>Strongly typed proto contracts prevent schema drift; binary framing is 3–5× faster than JSON REST for bulk inference; streaming support for future use</td>
+</tr>
+<tr>
+<td><strong>Bearer token interceptor on gRPC</strong></td>
+<td>ML server is a separate process/machine — it needs its own auth gate to prevent unauthorized inference calls</td>
+</tr>
+<tr>
+<td><strong>Argon2id for passwords</strong></td>
+<td>OWASP recommended KDF; resistant to GPU brute force (64 MB memory cost, 3 iterations, 2 parallel lanes)</td>
+</tr>
+<tr>
+<td><strong>AES-256-GCM for PII</strong></td>
+<td>Authenticated encryption — tamper detection built in; all sensitive fields (email, phone, account number) encrypted at rest</td>
+</tr>
+<tr>
+<td><strong>Deterministic SHA-256 hashes</strong></td>
+<td>Enables unique-index lookups on encrypted fields without decrypting every row (search by <code>hashed_email</code> instead of full scan)</td>
+</tr>
+<tr>
+<td><strong>Counting Bloom Filter</strong></td>
+<td>O(1) membership check with false-positive probability &lt; 0.01%; used for fast deduplication of known device fingerprints</td>
+</tr>
+<tr>
+<td><strong>Cloudflare Turnstile</strong></td>
+<td>Bot-resistant CAPTCHA on register and login without image puzzle UX friction</td>
+</tr>
+<tr>
+<td><strong>Fire-and-forget emails</strong></td>
+<td>Welcome, fraud alert, and transaction emails use <code>asyncio.create_task</code> so they never block the API response</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-infrastructure-resources">4. Infrastructure &amp; Resources</h2>
+<h3 id="database-collections-mongodb">Database Collections (MongoDB)</h3>
+<table>
+<thead>
+<tr>
+<th>Collection</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td>User profiles, hashed PII fields (<code>hashed_email</code>, <code>hashed_phone</code>), KYC status, role, preferences (language, theme, accessibility)</td>
+</tr>
+<tr>
+<td><code>accounts</code></td>
+<td>Bank accounts with AES-encrypted account numbers, balances, freeze status</td>
+</tr>
+<tr>
+<td><code>transactions</code></td>
+<td>All debit/credit records with category, ML risk score, payment channel</td>
+</tr>
+<tr>
+<td><code>payments</code></td>
+<td>UPI and account-to-account payment records, OTP state, approval status</td>
+</tr>
+<tr>
+<td><code>loans</code></td>
+<td>Loan applications, terms, approval/rejection status</td>
+</tr>
+<tr>
+<td><code>investments</code></td>
+<td>Investment records by type (MF, stock, SIP)</td>
+</tr>
+<tr>
+<td><code>investment_goals</code></td>
+<td>Financial goals with target amounts, deadlines, and progress</td>
+</tr>
+<tr>
+<td><code>sips</code></td>
+<td>SIP schedules and contribution history</td>
+</tr>
+<tr>
+<td><code>assets</code></td>
+<td>Physical and financial assets for net worth computation</td>
+</tr>
+<tr>
+<td><code>budgets</code></td>
+<td>Budget rules per category with alert thresholds</td>
+</tr>
+<tr>
+<td><code>families</code></td>
+<td>Family group records with head user</td>
+</tr>
+<tr>
+<td><code>family_members</code></td>
+<td>Per-member linking and spending limits (unique index on family_id + user_id)</td>
+</tr>
+<tr>
+<td><code>family_invitations</code></td>
+<td>Time-limited invite codes (TTL indexed via <code>expires_at</code>)</td>
+</tr>
+<tr>
+<td><code>fraud_logs</code></td>
+<td>Fraud alert records from ML model outputs, indexed on <code>transaction_id</code> and <code>user_id</code></td>
+</tr>
+<tr>
+<td><code>notifications</code></td>
+<td>In-app notification records, read status (indexed on user_id + read)</td>
+</tr>
+<tr>
+<td><code>kyc_documents</code></td>
+<td>KYC submission metadata and OCR confidence scores</td>
+</tr>
+<tr>
+<td><code>known_devices</code></td>
+<td>Trusted device fingerprints per user (unique index on user_id + fingerprint)</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>Active JWT sessions (TTL index: auto-delete after 7 days)</td>
+</tr>
+<tr>
+<td><code>audit_logs</code></td>
+<td>Admin action audit trail</td>
+</tr>
+<tr>
+<td><code>portfolios</code></td>
+<td>Investment portfolio summary per user (unique index on user_id)</td>
+</tr>
+<tr>
+<td><code>simulation_campaigns</code></td>
+<td>Sentinel phishing/SE campaign definitions</td>
+</tr>
+<tr>
+<td><code>simulation_assignments</code></td>
+<td>Per-employee simulation task assignments</td>
+</tr>
+<tr>
+<td><code>simulation_attempts</code></td>
+<td>Employee attempt records with pass/fail and behavior events</td>
+</tr>
+<tr>
+<td><code>simulation_templates</code></td>
+<td>Email / social engineering / incident drill templates</td>
+</tr>
+<tr>
+<td><code>employee_simulation_profiles</code></td>
+<td>Per-employee risk scores, flags, certification status</td>
+</tr>
+</tbody>
+</table>
+<h3 id="mongodb-indexes-created-on-startup">MongoDB Indexes Created on Startup</h3>
+<pre><code>users.hashed_email          — unique, partial (string type only)
+users.hashed_phone          — unique, partial (string type only)
+accounts.hashed_account_number — unique, partial (string type only)
+accounts.user_id            — standard index
+transactions.account_id     — standard index
+transactions.created_at     — standard index
+transactions.(user_id, created_at DESC) — compound index
+loans.user_id               — standard index
+fraud_logs.transaction_id   — standard index
+fraud_logs.user_id          — standard index
+notifications.(user_id, read) — compound index
+audit_logs.user_id          — standard index
+investments.user_id         — standard index
+portfolios.user_id          — unique index
+kyc_documents.user_id       — standard index
+known_devices.(user_id, fingerprint) — unique compound index
+sessions.created_at         — TTL index (expires after 604800 seconds = 7 days)
+families.head_user_id       — standard index
+family_members.(family_id, user_id) — unique compound index
+family_members.user_id      — standard index
+family_invitations.invitation_code — unique index
+family_invitations.(invitee_email, status) — compound index
+family_invitations.expires_at — TTL index (expires at document time)
+</code></pre>
+<h3 id="redis-key-patterns">Redis Key Patterns</h3>
+<table>
+<thead>
+<tr>
+<th>Key Pattern</th>
+<th>TTL</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session:{session_id}</code></td>
+<td>7 days</td>
+<td>Active session validation</td>
+</tr>
+<tr>
+<td><code>otp:{user_id}</code></td>
+<td>5 min</td>
+<td>Login / 2FA OTP</td>
+</tr>
+<tr>
+<td><code>reg_otp:{email}</code></td>
+<td>5 min</td>
+<td>Registration email OTP</td>
+</tr>
+<tr>
+<td><code>reg_phone_otp:{phone}</code></td>
+<td>5 min</td>
+<td>Registration phone OTP</td>
+</tr>
+<tr>
+<td><code>recovery_otp:{user_id}</code></td>
+<td>5 min</td>
+<td>Recovery info OTP</td>
+</tr>
+<tr>
+<td><code>reset_otp:{email}</code></td>
+<td>5 min</td>
+<td>Password reset OTP</td>
+</tr>
+<tr>
+<td><code>last_seen:{user_id}</code></td>
+<td>24 h</td>
+<td>User activity tracking</td>
+</tr>
+<tr>
+<td><code>cache:{prefix}:{args}</code></td>
+<td>5 min</td>
+<td>API response cache</td>
+</tr>
+<tr>
+<td><code>system_performance_zset</code></td>
+<td>sliding 20 min</td>
+<td>API performance metrics (sorted set, score = Unix timestamp)</td>
+</tr>
+<tr>
+<td><code>fcm_token:{user_id}</code></td>
+<td>—</td>
+<td>Firebase FCM device token</td>
+</tr>
+</tbody>
+</table>
+<h3 id="kafka-topics">Kafka Topics</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Producer</th>
+<th>Consumer(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>transactions.created</code></td>
+<td>transactions route</td>
+<td>Fraud detector, notification sender</td>
+</tr>
+<tr>
+<td><code>payments.initiated</code></td>
+<td>payments route</td>
+<td>OTP dispatcher, fraud checker</td>
+</tr>
+<tr>
+<td><code>fraud.alerts</code></td>
+<td>ML fraud route</td>
+<td>Admin notifier, email service</td>
+</tr>
+<tr>
+<td><code>user.activity</code></td>
+<td>auth route</td>
+<td>Redis <code>last_seen</code> updater</td>
+</tr>
+<tr>
+<td><code>notifications.send</code></td>
+<td>multiple routes</td>
+<td>In-app notification writer</td>
+</tr>
+<tr>
+<td><code>email.otpVerification</code></td>
+<td>auth route</td>
+<td>Email OTP sender (<code>handle_otp_verification</code>)</td>
+</tr>
+<tr>
+<td><code>simulation.email.deliver</code></td>
+<td>sim admin route</td>
+<td>Simulation email deliverer</td>
+</tr>
+<tr>
+<td><code>system.performance</code></td>
+<td>request middleware</td>
+<td>Redis metrics indexer (<code>handle_performance_metric</code>)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>All topics fall back to an in-memory queue (capped at 1000 events per topic) when Kafka is unavailable.</p>
+</blockquote>
+<hr />
+<h2 id="5-technology-stack">5. Technology Stack</h2>
+<h3 id="backend-core">Backend Core</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Version</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python</td>
+<td>3.11</td>
+<td>Runtime</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>≥0.104</td>
+<td>Async HTTP framework</td>
+</tr>
+<tr>
+<td>Uvicorn</td>
+<td>≥0.24</td>
+<td>ASGI server</td>
+</tr>
+<tr>
+<td>Motor</td>
+<td>≥3.3</td>
+<td>Async MongoDB driver</td>
+</tr>
+<tr>
+<td>Pydantic v2</td>
+<td>≥2.5</td>
+<td>Schema validation + settings</td>
+</tr>
+<tr>
+<td>aioredis</td>
+<td>≥2.0</td>
+<td>Async Redis client</td>
+</tr>
+<tr>
+<td>aiokafka</td>
+<td>≥0.13</td>
+<td>Async Kafka producer/consumer</td>
+</tr>
+<tr>
+<td>grpcio</td>
+<td>≥1.81</td>
+<td>gRPC transport to ML server</td>
+</tr>
+<tr>
+<td>logifyx</td>
+<td>≥1.1</td>
+<td>Structured colored logging</td>
+</tr>
+<tr>
+<td>httpx</td>
+<td>≥0.25</td>
+<td>Async HTTP client (external APIs)</td>
+</tr>
+<tr>
+<td>jinja2</td>
+<td>≥3.1</td>
+<td>Email template rendering</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-libraries">Security Libraries</h3>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python-jose</code></td>
+<td>JWT HS256 encode/decode</td>
+</tr>
+<tr>
+<td><code>argon2-cffi</code></td>
+<td>Argon2id password hashing (64MB memory, 3 iterations)</td>
+</tr>
+<tr>
+<td><code>cryptography</code> (AESGCM)</td>
+<td>AES-256-GCM authenticated encryption for PII fields</td>
+</tr>
+<tr>
+<td><code>cryptography</code> (Fernet)</td>
+<td>Symmetric encryption for AI agent request/response payloads</td>
+</tr>
+<tr>
+<td><code>mmh3</code></td>
+<td>MurmurHash3 for Counting Bloom Filter</td>
+</tr>
+<tr>
+<td><code>hashlib</code> SHA-256</td>
+<td>Deterministic PII hashing for indexed lookups</td>
+</tr>
+<tr>
+<td>Cloudflare Turnstile</td>
+<td>Bot-resistant CAPTCHA (REST verify via httpx)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ai-ml-libraries">AI / ML Libraries</h3>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groq</code></td>
+<td>LLaMA-3 70B inference (Compliance AI)</td>
+</tr>
+<tr>
+<td><code>faiss-cpu</code></td>
+<td>Vector similarity search for RAG retrieval</td>
+</tr>
+<tr>
+<td><code>sentence-transformers</code></td>
+<td><code>all-MiniLM-L6-v2</code> embeddings for document chunks</td>
+</tr>
+<tr>
+<td><code>rank-bm25</code></td>
+<td>BM25 sparse retrieval for hybrid search</td>
+</tr>
+<tr>
+<td><code>pytesseract</code></td>
+<td>Tesseract OCR for KYC document text extraction</td>
+</tr>
+<tr>
+<td><code>opencv-python-headless</code></td>
+<td>Image preprocessing (grayscale, blur, threshold) for OCR</td>
+</tr>
+<tr>
+<td><code>thefuzz</code></td>
+<td>Fuzzy string matching for Aadhaar–PAN name cross-validation</td>
+</tr>
+<tr>
+<td><code>firebase-admin</code></td>
+<td>Firebase Admin SDK for FCM push notifications</td>
+</tr>
+<tr>
+<td><code>google-api-python-client</code></td>
+<td>Google GenAI for KYC document understanding</td>
+</tr>
+</tbody>
+</table>
+<h3 id="external-services">External Services</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Integration Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Firebase FCM</td>
+<td><code>firebase-admin</code> SDK</td>
+<td>Push notifications to Flutter mobile app</td>
+</tr>
+<tr>
+<td>Twilio</td>
+<td><code>twilio</code> SDK</td>
+<td>SMS OTP delivery + compliance voice calls (TwiML)</td>
+</tr>
+<tr>
+<td>Cloudflare Turnstile</td>
+<td><code>httpx</code> POST to CF verify API</td>
+<td>CAPTCHA on register and login</td>
+</tr>
+<tr>
+<td>Groq</td>
+<td><code>groq</code> Python SDK</td>
+<td>LLaMA-3 70B LLM inference for compliance RAG + chatbot</td>
+</tr>
+<tr>
+<td>Google GenAI</td>
+<td><code>google-api-python-client</code></td>
+<td>KYC document OCR and understanding</td>
+</tr>
+<tr>
+<td>Marketstack</td>
+<td><code>httpx</code> REST</td>
+<td>Live stock market data</td>
+</tr>
+<tr>
+<td>Alpha Vantage</td>
+<td><code>httpx</code> REST</td>
+<td>Financial data and exchange rates</td>
+</tr>
+<tr>
+<td>Finnhub</td>
+<td><code>httpx</code> REST</td>
+<td>Market news feed</td>
+</tr>
+<tr>
+<td>NewsAPI</td>
+<td><code>httpx</code> REST</td>
+<td>Financial news aggregation</td>
+</tr>
+<tr>
+<td>Gmail / SMTP</td>
+<td><code>aiosmtplib</code> + Google OAuth</td>
+<td>Transactional emails (OTP, alerts, welcome)</td>
+</tr>
+<tr>
+<td>Deepgram</td>
+<td><code>httpx</code> (stubbed)</td>
+<td>Speech-to-text (voice compliance queries)</td>
+</tr>
+<tr>
+<td>Sarvam AI</td>
+<td><code>httpx</code> (stubbed)</td>
+<td>Indic language translation for voice</td>
+</tr>
+</tbody>
+</table>
+<h3 id="supply-chain-security">Supply Chain Security</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CycloneDX</td>
+<td>Software Bill of Materials (SBOM) generated via <code>cyclonedx-bom</code></td>
+</tr>
+<tr>
+<td>CycloneDX</td>
+<td>Cryptography Bill of Materials (CBOM) tracking all crypto primitives used</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deployment-stack">Deployment Stack</h3>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>Container runtime for all services</td>
+</tr>
+<tr>
+<td>Docker Compose</td>
+<td>Multi-service orchestration with health checks and restart policies</td>
+</tr>
+<tr>
+<td>Kafdrop</td>
+<td>Kafka management and topic inspection UI (port 9000)</td>
+</tr>
+<tr>
+<td>Redis Stack</td>
+<td>Redis server + RedisInsight UI (port 8001)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frontend-stack">Frontend Stack</h3>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>React 18 + Vite</td>
+<td>SPA framework with fast HMR</td>
+</tr>
+<tr>
+<td>TypeScript</td>
+<td>Type safety across components and API layer</td>
+</tr>
+<tr>
+<td>Tailwind CSS</td>
+<td>Utility-first styling</td>
+</tr>
+<tr>
+<td>Zustand (with persist)</td>
+<td>State management with localStorage persistence</td>
+</tr>
+<tr>
+<td>React Router v6</td>
+<td>Client-side routing with role-protected routes</td>
+</tr>
+<tr>
+<td>Shadcn/ui</td>
+<td>Accessible component library</td>
+</tr>
+<tr>
+<td>Recharts</td>
+<td>Financial data charts and graphs</td>
+</tr>
+<tr>
+<td>i18next</td>
+<td>Internationalization (EN, HI, PA)</td>
+</tr>
+<tr>
+<td>Framer Motion</td>
+<td>Page transitions and 3D animations</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-security-architecture">6. Security Architecture</h2>
+<h3 id="61-authentication-flow">6.1 Authentication Flow</h3>
+<pre><code>User submits email + password + CAPTCHA token
+              │
+              ▼
+  ┌─────────────────────────┐
+  │ Cloudflare Turnstile    │ ← POST to CF siteverify API
+  │ Verification            │   (enabled via ENABLE_TURNSTILE=true)
+  └──────────┬──────────────┘
+             │ pass
+             ▼
+  ┌─────────────────────────┐
+  │ SHA-256 hash lookup     │ ← hashed_email unique index
+  │ (never decrypt to search│   avoids full collection scan
+  └──────────┬──────────────┘
+             │ user found
+             ▼
+  ┌─────────────────────────┐
+  │ AES-256-GCM decrypt     │ ← decrypt: email, phone, full_name
+  │ user document fields    │
+  └──────────┬──────────────┘
+             │
+             ▼
+  ┌─────────────────────────┐
+  │ Argon2id verify         │ ← 64 MB memory, 3 iterations, 2 parallel
+  │ (password vs stored hash│   OWASP recommended KDF
+  └──────────┬──────────────┘
+             │ pass
+             ▼
+  ┌─────────────────────────┐
+  │ Device fingerprint      │ ← hash(IP + User-Agent + Accept-Language)
+  │ check vs known_devices  │
+  └──────────┬──────────────┘
+             │
+      ┌──────┴──────┐
+  New device       Known device
+      │                  │
+      ▼                  ▼
+  • Email alert     Behavior anomaly
+  • IP geo-lookup   ML check:
+  • Save to         IsolationForest + SVM
+    known_devices   Anomaly? → Email alert
+      │                  │
+      └──────┬───────────┘
+             │
+             ▼
+  ┌─────────────────────────┐
+  │ Session creation        │ ← UUID session_id
+  │ Redis.setex(session:id, │   7-day TTL
+  │   7 days, user_id)      │
+  └──────────┬──────────────┘
+             │
+             ▼
+  JWT access token (30 min) + JWT refresh token (7 days)
+  Both tokens embed session_id claim
+  Response: tokens in body (mobile) + httpOnly cookies (web)
+  Kafka: publish &quot;user.activity&quot; event
+</code></pre>
+<h3 id="62-per-request-authorization-every-protected-endpoint">6.2 Per-Request Authorization (Every Protected Endpoint)</h3>
+<pre><code>Incoming HTTP request
+         │
+         ▼ get_current_user dependency
+  Check Authorization: Bearer {token} header
+         │ not found? fallback to httpOnly cookie
+         ▼
+  JWT decode (HS256, verify expiry)
+  Assert: payload[&quot;type&quot;] == &quot;access&quot;
+         │
+         ▼
+  session_id from JWT → Redis.get(&quot;session:{session_id}&quot;)
+         │ None? → 401 &quot;Session has been revoked&quot;
+         ▼
+  MongoDB users.find_one(_id = ObjectId(sub))
+         │ None? → 401 &quot;User not found&quot;
+         ▼
+  AES-256-GCM decrypt user document fields
+         │
+         ▼
+  require_role(*roles) — 403 if role not in allowed set
+         │
+         ▼
+  require_kyc — 403 if kyc_status != &quot;verified&quot; (payment-sensitive routes)
+         │
+         ▼
+  Endpoint handler executes
+</code></pre>
+<h3 id="63-data-security-layers">6.3 Data Security Layers</h3>
+<pre><code>FIELD-LEVEL ENCRYPTION (AES-256-GCM, 256-bit key, 96-bit nonce):
+  Encrypted before MongoDB write:
+    users    → email, phone, full_name
+    accounts → account_number, account_holder_name
+  Nonce prepended to ciphertext, base64-encoded for storage
+
+SEARCHABLE DETERMINISTIC HASH (SHA-256, normalized lowercase):
+  users.hashed_email           → unique sparse MongoDB index
+  users.hashed_phone           → unique sparse MongoDB index
+  accounts.hashed_account_number → unique sparse MongoDB index
+  Purpose: lookup by sensitive field without decrypting every document
+
+AI AGENT PAYLOAD ENCRYPTION (Fernet symmetric):
+  /agents/advisor and /agents/teacher:
+    Client sends: { encrypted_token: &quot;&lt;fernet(request_json)&gt;&quot; }
+    Server returns: { encrypted_token: &quot;&lt;fernet(response_json)&gt;&quot; }
+  Prevents clear-text financial data in transit even over HTTPS
+
+PII STRIPPING BEFORE LLM (anonymize_pii):
+  Masks: name→&quot;***&quot;, email→&quot;***@***.com&quot;, phone→&quot;XXXXX-XXXXX&quot;,
+         account_number→&quot;XXX{last4}&quot;
+  Applied before every Groq API call in chatbot, advisor, teacher
+
+AUDIT LOG MASKING (mask_pii):
+  Applied to all query text in compliance audit JSONL
+  Never logs: raw audio, full account numbers, passwords
+
+HOMOMORPHIC ENCRYPTION SIMULATION (chatbot):
+  Financial amounts encoded as HE_CT_{val} before LLM context
+  LLM response decoded back to ₹{amount} before user response
+</code></pre>
+<h3 id="64-payment-security-chain">6.4 Payment Security Chain</h3>
+<pre><code>POST /payments/initiate
+         │
+         ▼ require_kyc → 403 if not KYC-verified
+         ▼ validate source account belongs to user
+         ▼ validate balance ≥ amount
+         ▼ generate 6-digit OTP → Redis (5-min TTL)
+         │
+         ├── SMS via Twilio
+         └── Email via Gmail
+         │
+         │  amount &gt; ₹1,00,000 (LARGE_PAYMENT_THRESHOLD)?
+         │       │ Yes
+         │       ▼
+         │  Firebase FCM push to Flutter app
+         │  (title: &quot;Large Payment Approval Required&quot;)
+         │  User taps YES/NO → POST /payments/{id}/respond
+         │
+         ▼ POST /payments/verify (OTP from Redis)
+         ▼ Debit source account, credit destination
+         ▼ Create transaction records
+         ▼ Kafka: &quot;payments.initiated&quot; event
+         ▼ ML fraud check (async, non-blocking)
+         ▼ Email + in-app notification (fire-and-forget)
+</code></pre>
+<h3 id="65-complete-security-controls-summary">6.5 Complete Security Controls Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Implementation</th>
+<th>Layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Password hashing</td>
+<td>Argon2id — 64 MB, 3 iter, 2 parallel</td>
+<td>Auth</td>
+</tr>
+<tr>
+<td>Access tokens</td>
+<td>JWT HS256, 30-min expiry, session_id claim</td>
+<td>Auth</td>
+</tr>
+<tr>
+<td>Refresh tokens</td>
+<td>JWT HS256, 7-day expiry, Redis-backed session</td>
+<td>Auth</td>
+</tr>
+<tr>
+<td>Session revocation</td>
+<td>Redis DELETE on logout; TTL auto-expiry</td>
+<td>Auth</td>
+</tr>
+<tr>
+<td>CAPTCHA</td>
+<td>Cloudflare Turnstile (register + login)</td>
+<td>Auth</td>
+</tr>
+<tr>
+<td>PII field encryption</td>
+<td>AES-256-GCM per field, random 96-bit nonce</td>
+<td>Data at rest</td>
+</tr>
+<tr>
+<td>Searchable PII</td>
+<td>SHA-256 deterministic hash + sparse unique index</td>
+<td>Data</td>
+</tr>
+<tr>
+<td>Agent payload encryption</td>
+<td>Fernet symmetric (request + response)</td>
+<td>Agent</td>
+</tr>
+<tr>
+<td>LLM PII stripping</td>
+<td><code>anonymize_pii()</code> before every Groq call</td>
+<td>Agent</td>
+</tr>
+<tr>
+<td>CORS</td>
+<td>Explicit per-origin allowlist (no wildcard in prod)</td>
+<td>Transport</td>
+</tr>
+<tr>
+<td>Device fingerprinting</td>
+<td>SHA-256(IP + UA) → MongoDB <code>known_devices</code></td>
+<td>Session</td>
+</tr>
+<tr>
+<td>New device alert</td>
+<td>Email notification + IP geolocation lookup</td>
+<td>Session</td>
+</tr>
+<tr>
+<td>Session tracking</td>
+<td>All active sessions visible and revocable</td>
+<td>Session</td>
+</tr>
+<tr>
+<td>Behavior anomaly ML</td>
+<td>Isolation Forest + per-user SVM</td>
+<td>ML</td>
+</tr>
+<tr>
+<td>Sequence anomaly ML</td>
+<td>LSTM Autoencoder on transaction history</td>
+<td>ML</td>
+</tr>
+<tr>
+<td>Insider threat ML</td>
+<td>GraphSAGE GNN on user-merchant graph</td>
+<td>ML</td>
+</tr>
+<tr>
+<td>Large payment approval</td>
+<td>Firebase FCM push + OTP dual-factor</td>
+<td>Payment</td>
+</tr>
+<tr>
+<td>Payment OTP</td>
+<td>6-digit, 5-min TTL in Redis</td>
+<td>Payment</td>
+</tr>
+<tr>
+<td>KYC verification</td>
+<td>OCR + Verhoeff checksum + fuzzy name match</td>
+<td>Identity</td>
+</tr>
+<tr>
+<td>Aadhaar masking</td>
+<td>Only last 4 digits stored (<code>XXXX-XXXX-{last4}</code>)</td>
+<td>Identity</td>
+</tr>
+<tr>
+<td>Compliance audit log</td>
+<td>JSONL with PII masking, latency, rule triggers</td>
+<td>Compliance</td>
+</tr>
+<tr>
+<td>Rate limiting</td>
+<td>30/min text, 10/min voice (Compliance AI)</td>
+<td>Compliance</td>
+</tr>
+<tr>
+<td>SBOM / CBOM</td>
+<td>CycloneDX BOM for supply chain transparency</td>
+<td>Supply Chain</td>
+</tr>
+<tr>
+<td>gRPC auth</td>
+<td>Bearer token interceptor on every ML channel call</td>
+<td>ML transport</td>
+</tr>
+<tr>
+<td>Counting Bloom Filter</td>
+<td>O(1) device deduplication, error rate &lt; 0.01%</td>
+<td>Performance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="7-all-api-endpoints">7. All API Endpoints</h2>
+<blockquote>
+<p>Base prefix: <code>/api/v1</code> for all banking endpoints.<br />
+Compliance routes: <code>/api/v1/compliance</code>.<br />
+Simulation tracking: <code>/api/track</code>.</p>
+</blockquote>
+<h3 id="71-authentication-auth">7.1 Authentication (<code>/auth</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/auth/register</code></td>
+<td>Public</td>
+<td>Initiate registration (validate + send email OTP)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/register/send-email-otp</code></td>
+<td>Public</td>
+<td>Resend registration email OTP</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/register/verify-email-otp</code></td>
+<td>Public</td>
+<td>Verify registration email OTP</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/register/send-phone-otp</code></td>
+<td>Public</td>
+<td>Send phone OTP during registration</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/register/complete</code></td>
+<td>Public</td>
+<td>Complete registration (verify both OTPs, create user)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/send-phone-otp</code></td>
+<td>Public</td>
+<td>Send phone OTP for SIM binding</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/verify-phone</code></td>
+<td>Public</td>
+<td>Verify phone OTP for SIM binding</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/login</code></td>
+<td>Public</td>
+<td>Login with CAPTCHA, Argon2, device check</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/admin/login</code></td>
+<td>Public</td>
+<td>Admin-specific login flow</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/logout</code></td>
+<td>JWT</td>
+<td>Clear auth cookies, return success</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/refresh</code></td>
+<td>Cookie/Header</td>
+<td>Issue new access token from refresh token</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/auth/me</code></td>
+<td>JWT</td>
+<td>Get current authenticated user profile</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/auth/profile</code></td>
+<td>JWT</td>
+<td>Update profile (name, avatar, language, theme, accessibility)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/send-otp</code></td>
+<td>JWT</td>
+<td>Generate OTP for logged-in user operations</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/verify-otp</code></td>
+<td>JWT</td>
+<td>Verify OTP</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/auth/recovery-info</code></td>
+<td>JWT</td>
+<td>Update recovery email / phone</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/recovery-info/send-otp</code></td>
+<td>JWT</td>
+<td>Send OTP to recovery contact</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/recovery-info/verify-and-update</code></td>
+<td>JWT</td>
+<td>Verify OTP and save new recovery info</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/request-password-reset</code></td>
+<td>Public</td>
+<td>Send password reset OTP to email</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/reset-password</code></td>
+<td>Public</td>
+<td>Reset password using OTP</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/auth/security/report</code></td>
+<td>JWT</td>
+<td>Report "this wasn't me" → logout + flag</td>
+</tr>
+</tbody>
+</table>
+<h3 id="72-sessions-sessions">7.2 Sessions (<code>/sessions</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/sessions</code></td>
+<td>JWT</td>
+<td>List all active sessions for current user</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/sessions/{session_id}</code></td>
+<td>JWT</td>
+<td>Revoke a specific session (logout that device)</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/sessions</code></td>
+<td>JWT</td>
+<td>Revoke all sessions (logout all devices)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="73-accounts-accounts">7.3 Accounts (<code>/accounts</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/accounts</code></td>
+<td>JWT</td>
+<td>Create a new bank account</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/accounts</code></td>
+<td>JWT</td>
+<td>List all user accounts</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/accounts/{account_id}</code></td>
+<td>JWT</td>
+<td>Get specific account details</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/accounts/link-external</code></td>
+<td>JWT</td>
+<td>Link external bank account via Account Aggregator</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/accounts/{account_id}/freeze</code></td>
+<td>JWT</td>
+<td>Freeze account (blocks transactions)</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/accounts/{account_id}/unfreeze</code></td>
+<td>JWT</td>
+<td>Unfreeze account</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/accounts/{account_id}</code></td>
+<td>JWT</td>
+<td>Delete account</td>
+</tr>
+</tbody>
+</table>
+<h3 id="74-transactions-transactions">7.4 Transactions (<code>/transactions</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/transactions</code></td>
+<td>JWT+KYC</td>
+<td>Create a debit/credit transaction</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/transactions</code></td>
+<td>JWT</td>
+<td>List transactions with pagination/filters</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/transactions/spending-analysis</code></td>
+<td>JWT</td>
+<td>Categorical spending breakdown</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/transactions/{transaction_id}</code></td>
+<td>JWT</td>
+<td>Get specific transaction</td>
+</tr>
+</tbody>
+</table>
+<h3 id="75-payments-payments">7.5 Payments (<code>/payments</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/payments/initiate</code></td>
+<td>JWT+KYC</td>
+<td>Initiate UPI or account payment (triggers OTP)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/payments/verify</code></td>
+<td>JWT+KYC</td>
+<td>Verify OTP and execute payment</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/payments/{payment_id}/respond</code></td>
+<td>JWT+KYC</td>
+<td>Approve/reject via Firebase push (large payments)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/payments/{payment_id}/resend</code></td>
+<td>JWT</td>
+<td>Resend OTP (choose email or SMS channel)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/payments</code></td>
+<td>JWT</td>
+<td>List payment history</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/payments/{payment_id}</code></td>
+<td>JWT</td>
+<td>Get specific payment details</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/payments/qr/generate</code></td>
+<td>JWT</td>
+<td>Generate UPI QR code data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="76-investments-investments">7.6 Investments (<code>/investments</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/investments</code></td>
+<td>JWT</td>
+<td>Record a new investment</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments</code></td>
+<td>JWT</td>
+<td>List all investments</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/portfolio</code></td>
+<td>JWT</td>
+<td>Full portfolio summary with performance data</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/stocks</code></td>
+<td>JWT</td>
+<td>Live stock data (Marketstack API)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/news</code></td>
+<td>JWT</td>
+<td>Financial news (Finnhub + NewsAPI)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/goals/smart-insights</code></td>
+<td>JWT</td>
+<td>AI-generated investment goal insights</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/investments/goals</code></td>
+<td>JWT</td>
+<td>Create an investment goal</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/goals</code></td>
+<td>JWT</td>
+<td>List all investment goals</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/investments/goals/{goal_id}</code></td>
+<td>JWT</td>
+<td>Delete an investment goal</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/investments/sips</code></td>
+<td>JWT</td>
+<td>Create a SIP (Systematic Investment Plan)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/sips</code></td>
+<td>JWT</td>
+<td>List all SIPs</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td><code>/investments/sips/{sip_id}</code></td>
+<td>JWT</td>
+<td>Update SIP (pause, modify amount)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/investments/first-time-tips</code></td>
+<td>JWT</td>
+<td>Financial tips for first-time investors</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/investments/mark-invested</code></td>
+<td>JWT</td>
+<td>Mark user as experienced investor (hides tips)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="77-loans-loans">7.7 Loans (<code>/loans</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/loans/apply</code></td>
+<td>JWT+KYC</td>
+<td>Apply for a loan</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/loans</code></td>
+<td>JWT</td>
+<td>List user's loan applications</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/loans/{loan_id}</code></td>
+<td>JWT</td>
+<td>Get specific loan details</td>
+</tr>
+</tbody>
+</table>
+<h3 id="78-ml-ai-inference-ml">7.8 ML / AI Inference (<code>/ml</code>)</h3>
+<blockquote>
+<p>Routes gRPC ML server when <code>USING_GRPC=true</code>, otherwise HTTP fallback</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/ml/recommendations</code></td>
+<td>JWT</td>
+<td>Personalized financial product recommendations</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/fraud-check</code></td>
+<td>JWT</td>
+<td>Real-time transaction fraud check (Random Forest)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/behavior-anomaly</code></td>
+<td>JWT</td>
+<td>Behavioral anomaly detection (Isolation Forest + SVM)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/forecast-cashflow</code></td>
+<td>JWT</td>
+<td>Cashflow forecast for account (ARIMA/RF, N-day horizon)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ml/spending-insights</code></td>
+<td>JWT</td>
+<td>ML-generated spending pattern analysis</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ml/account-insights</code></td>
+<td>JWT</td>
+<td>Account health insights</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ml/sip-insights</code></td>
+<td>JWT</td>
+<td>SIP performance and optimization insights</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ml/asset-insights</code></td>
+<td>JWT</td>
+<td>Asset composition and rebalancing insights</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/ml/loan-insights</code></td>
+<td>JWT</td>
+<td>Loan risk and repayment insights</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/whatif-scenario</code></td>
+<td>JWT</td>
+<td>What-if financial scenario simulation</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/chatbot</code></td>
+<td>JWT</td>
+<td>AI financial chatbot (stress detection + Groq LLaMA-3)</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/classify-transaction</code></td>
+<td>JWT</td>
+<td>BERT multilingual transaction classifier</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/ml/voice-agent</code></td>
+<td>JWT</td>
+<td>Voice-based financial assistant</td>
+</tr>
+</tbody>
+</table>
+<h3 id="79-kyc-kyc">7.9 KYC (<code>/kyc</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/kyc/upload</code></td>
+<td>JWT</td>
+<td>Upload Aadhaar front/back + PAN for verification</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/kyc/status</code></td>
+<td>JWT</td>
+<td>Check KYC verification status</td>
+</tr>
+</tbody>
+</table>
+<h3 id="710-notifications-notifications">7.10 Notifications (<code>/notifications</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/notifications/fcm-token</code></td>
+<td>JWT</td>
+<td>Register Firebase FCM device token</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/notifications</code></td>
+<td>JWT</td>
+<td>List all notifications</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/notifications/{notification_id}/read</code></td>
+<td>JWT</td>
+<td>Mark single notification as read</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/notifications/read-all</code></td>
+<td>JWT</td>
+<td>Mark all notifications as read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/notifications/unread-count</code></td>
+<td>JWT</td>
+<td>Get unread notification count</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/notifications/alerts</code></td>
+<td>JWT</td>
+<td>List fraud and security alerts</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/notifications/alerts/{alert_id}/read</code></td>
+<td>JWT</td>
+<td>Mark alert as read</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/notifications/alerts/unread-count</code></td>
+<td>JWT</td>
+<td>Count unread alerts</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/notifications/unified</code></td>
+<td>JWT</td>
+<td>Unified feed (notifications + alerts combined)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="711-account-aggregator-aa">7.11 Account Aggregator (<code>/aa</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/aa/consent/request</code></td>
+<td>JWT</td>
+<td>Initiate consent for external bank data sharing</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/aa/consent/{consent_id}</code></td>
+<td>JWT</td>
+<td>Check consent status</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/aa/accounts</code></td>
+<td>JWT</td>
+<td>Fetch linked external bank accounts</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/aa/transactions/{account_id}</code></td>
+<td>JWT</td>
+<td>Fetch transactions from external account</td>
+</tr>
+</tbody>
+</table>
+<h3 id="712-family-banking-family">7.12 Family Banking (<code>/family</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/family/invite</code></td>
+<td>JWT</td>
+<td>Invite a family member via email</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/family/respond</code></td>
+<td>JWT</td>
+<td>Accept or reject a family invitation</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/family/set-limit</code></td>
+<td>JWT</td>
+<td>Set spending limit for a family member</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/family/my-family</code></td>
+<td>JWT</td>
+<td>Get family group details and all members</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/family/invitations</code></td>
+<td>JWT</td>
+<td>List pending invitations</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/family/member/{member_user_id}</code></td>
+<td>JWT</td>
+<td>Remove a family member</td>
+</tr>
+</tbody>
+</table>
+<h3 id="713-assets-assets">7.13 Assets (<code>/assets</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/assets</code></td>
+<td>JWT</td>
+<td>Add a new asset (physical or financial)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/assets</code></td>
+<td>JWT</td>
+<td>List all assets</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/assets/{asset_id}</code></td>
+<td>JWT</td>
+<td>Delete an asset</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/assets/net-worth-summary</code></td>
+<td>JWT</td>
+<td>Compute total net worth from all assets</td>
+</tr>
+</tbody>
+</table>
+<h3 id="714-budgets-budgets">7.14 Budgets (<code>/budgets</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/budgets</code></td>
+<td>JWT</td>
+<td>Create a category budget with threshold</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/budgets</code></td>
+<td>JWT</td>
+<td>List all budgets</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/budgets/{budget_id}</code></td>
+<td>JWT</td>
+<td>Delete a budget</td>
+</tr>
+</tbody>
+</table>
+<h3 id="715-credit-tax-risk">7.15 Credit, Tax, Risk</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/credit/score</code></td>
+<td>JWT</td>
+<td>Compute live credit score (300–900 with inertia)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/tax/summary</code></td>
+<td>JWT</td>
+<td>Tax optimization summary</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/risk/summary</code></td>
+<td>JWT</td>
+<td>Composite financial risk score</td>
+</tr>
+</tbody>
+</table>
+<h3 id="716-ai-agents-agents">7.16 AI Agents (<code>/agents</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/agents/advisor</code></td>
+<td>JWT</td>
+<td>Fernet-encrypted Wealth Advisor response</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/agents/teacher</code></td>
+<td>JWT</td>
+<td>Fernet-encrypted Wealth Teacher daily lesson</td>
+</tr>
+</tbody>
+</table>
+<h3 id="717-compliance-ai-compliance">7.17 Compliance AI (<code>/compliance</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST</td>
+<td><code>/compliance/query</code></td>
+<td>Public</td>
+<td>Text-based compliance query via RAG</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/compliance/call/inbound</code></td>
+<td>Twilio webhook</td>
+<td>TwiML for inbound compliance phone call</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/compliance/call/process</code></td>
+<td>Twilio webhook</td>
+<td>Process voice recording → RAG → TTS</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/compliance/call/continue</code></td>
+<td>Twilio webhook</td>
+<td>Continue or end the compliance call</td>
+</tr>
+</tbody>
+</table>
+<h3 id="718-admin-admin">7.18 Admin (<code>/admin</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth (Role)</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/users</code></td>
+<td>Admin</td>
+<td>List all users</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/users/{user_id}/role</code></td>
+<td>Admin</td>
+<td>Change user role</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/users/{user_id}/deactivate</code></td>
+<td>Admin</td>
+<td>Deactivate user account</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/users/{user_id}/activate</code></td>
+<td>Admin</td>
+<td>Reactivate user account</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/kyc/pending</code></td>
+<td>Admin</td>
+<td>List pending KYC submissions</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/kyc/escalated</code></td>
+<td>Admin</td>
+<td>List escalated KYC cases</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/kyc/{user_id}/action</code></td>
+<td>Admin</td>
+<td>Approve / reject / escalate KYC</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/loans</code></td>
+<td>Admin</td>
+<td>List all loan applications</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/loans/{loan_id}/approve</code></td>
+<td>Admin</td>
+<td>Approve loan</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/loans/{loan_id}/reject</code></td>
+<td>Admin</td>
+<td>Reject loan</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/fraud-alerts</code></td>
+<td>Admin</td>
+<td>List all fraud alerts</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td><code>/admin/fraud-alerts/{alert_id}/resolve</code></td>
+<td>Admin</td>
+<td>Resolve a fraud alert</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/insider-threat-check</code></td>
+<td>Admin</td>
+<td>Run GraphSAGE insider threat scan</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/analytics</code></td>
+<td>Admin</td>
+<td>System-wide analytics dashboard</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/audit-logs</code></td>
+<td>Admin</td>
+<td>View full audit log trail</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/performance</code></td>
+<td>Admin</td>
+<td>API performance metrics (20-min sliding window)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/employee-notifications/notifications/summary</code></td>
+<td>Employee</td>
+<td>Employee notification summary</td>
+</tr>
+</tbody>
+</table>
+<h3 id="719-sentinel-simulation-lab">7.19 Sentinel Simulation Lab</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/stats/overview</code></td>
+<td>SuperAdmin</td>
+<td>Campaign stats overview</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/employees</code></td>
+<td>SuperAdmin</td>
+<td>Paginated employee simulation profiles</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/employees/{hash}</code></td>
+<td>SuperAdmin</td>
+<td>Individual employee profile</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/campaigns/single</code></td>
+<td>SuperAdmin</td>
+<td>Trigger single-target campaign</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/campaigns/random</code></td>
+<td>SuperAdmin</td>
+<td>Trigger random-target campaign</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/campaigns/bulk</code></td>
+<td>SuperAdmin</td>
+<td>Trigger bulk campaign for department</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/campaigns</code></td>
+<td>SuperAdmin</td>
+<td>List all campaigns</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/campaigns/{id}</code></td>
+<td>SuperAdmin</td>
+<td>Campaign details</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/campaigns/{id}/cancel</code></td>
+<td>SuperAdmin</td>
+<td>Cancel active campaign</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/threats</code></td>
+<td>SuperAdmin</td>
+<td>List detected insider threats</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/threats/{id}/approve</code></td>
+<td>SuperAdmin</td>
+<td>Approve threat escalation</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/threats/{id}/reject</code></td>
+<td>SuperAdmin</td>
+<td>Reject threat</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/admin/sim/scraper/run</code></td>
+<td>SuperAdmin</td>
+<td>Run OSINT scraper for employee exposure</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/reports/leaderboard</code></td>
+<td>SuperAdmin</td>
+<td>Security awareness leaderboard</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/reports/flagged</code></td>
+<td>SuperAdmin</td>
+<td>High-risk flagged employees</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/admin/sim/reports/posture</code></td>
+<td>SuperAdmin</td>
+<td>Org-wide security posture</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/portal/login</code></td>
+<td>Employee</td>
+<td>Mock portal login</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/dashboard</code></td>
+<td>Employee</td>
+<td>Portal dashboard</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/inbox</code></td>
+<td>Employee</td>
+<td>Simulated email inbox (real + fake + phishing)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/inbox/{email_id}</code></td>
+<td>Employee</td>
+<td>Read specific email</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/portal/inbox/{email_id}/report</code></td>
+<td>Employee</td>
+<td>Report suspicious email</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/phishing/portal-session/{token}</code></td>
+<td>Public</td>
+<td>Phishing session landing page (honeypot)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/phishing/click/{token}</code></td>
+<td>Public</td>
+<td>Track phishing link click event</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/portal/phishing/credentials/{token}</code></td>
+<td>Public</td>
+<td>Track credential submission</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/social/{token}</code></td>
+<td>Public</td>
+<td>Social engineering landing page</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/portal/social/respond/{token}</code></td>
+<td>Public</td>
+<td>Track social engineering response</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/portal/incident/form/{token}</code></td>
+<td>Public</td>
+<td>Incident drill form</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/portal/incident/submit/{token}</code></td>
+<td>Public</td>
+<td>Submit incident drill response</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/api/track/behavior/{attempt_id}</code></td>
+<td>Public</td>
+<td>Real-time behavior telemetry (click, hover, scroll, read_time)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="8-user-flow-diagrams">8. User Flow Diagrams</h2>
+<h3 id="81-new-customer-registration">8.1 New Customer Registration</h3>
+<pre><code>User opens /register
+       │
+       ▼ POST /auth/register
+  ┌──────────────────────────────────────────────┐
+  │ 1. Validate: name, email, password, phone    │
+  │    (phone: Indian format, starts 6-9, 10 dig)│
+  │ 2. Cloudflare Turnstile CAPTCHA verify       │
+  │ 3. SHA-256(email) check — already exists?    │
+  └───────────────────┬──────────────────────────┘
+                      │ OK
+                      ▼ POST /auth/register/send-email-otp
+  ┌──────────────────────────────────────────────┐
+  │ 6-digit OTP generated → Redis 5 min TTL      │
+  │ OTP sent via Gmail API                       │
+  └───────────────────┬──────────────────────────┘
+                      │
+                      ▼ POST /auth/register/verify-email-otp
+                   Email OTP verified
+                      │
+                      ▼ POST /auth/register/send-phone-otp
+  ┌──────────────────────────────────────────────┐
+  │ SMS OTP via Twilio → Redis 5 min TTL         │
+  └───────────────────┬──────────────────────────┘
+                      │
+                      ▼ POST /auth/register/complete
+  ┌──────────────────────────────────────────────┐
+  │ Both OTPs verified                           │
+  │ • Argon2id hash password                     │
+  │ • AES-256-GCM encrypt: email, phone, name    │
+  │ • SHA-256 hash: email, phone (for indexes)   │
+  │ • Insert MongoDB user document               │
+  │ • Bloom filter updated                       │
+  │ • Welcome email sent (fire-and-forget)       │
+  └───────────────────┬──────────────────────────┘
+                      │
+                      ▼ Redirect to KYC
+  ┌──────────────────────────────────────────────┐
+  │ POST /kyc/upload                             │
+  │ • Aadhaar front + back (base64)              │
+  │ • PAN card (base64)                          │
+  │                                              │
+  │ Processing:                                  │
+  │ • Gaussian blur + Otsu threshold (OpenCV)    │
+  │ • Tesseract OCR / Google GenAI extraction    │
+  │ • Verhoeff checksum on Aadhaar               │
+  │ • Fuzzy name match Aadhaar ↔ PAN (≥80%)    │
+  │ • DOB cross-validation                       │
+  │ • Confidence score computed (0–100%)         │
+  │ • Status → &quot;pending&quot;                         │
+  └───────────────────┬──────────────────────────┘
+                      │ Admin reviews queue
+                      ▼ PUT /admin/kyc/{user_id}/action
+              KYC Approved → status = &quot;verified&quot;
+              Full access unlocked (payments, loans)
+</code></pre>
+<h3 id="82-login-and-session-lifecycle">8.2 Login and Session Lifecycle</h3>
+<pre><code>User enters email + password + CAPTCHA
+              │
+              ▼ POST /auth/login
+  ┌─────────────────────────────────┐
+  │ Turnstile verify → CF API       │
+  │ SHA-256(email) → MongoDB lookup │
+  │ AES-256-GCM decrypt user doc    │
+  │ Argon2id.verify(password)       │
+  └────────────┬────────────────────┘
+               │
+       ┌───────┴────────┐
+   New device        Known device
+       │                   │
+       ▼                   ▼
+  • Email alert        Isolation Forest
+  • IP geo lookup      + SVM anomaly check
+  • Store fingerprint  Anomaly? → Email alert
+       │                   │
+       └───────┬────────────┘
+               │
+               ▼
+  Redis: session:{UUID} → user_id  [7-day TTL]
+  JWT access token  (30 min, has session_id)
+  JWT refresh token (7 days, has session_id)
+  Set httpOnly cookies + return in body
+
+  Kafka → &quot;user.activity&quot; event → Redis last_seen update
+               │
+               │ Every request (protected route):
+               ▼
+  JWT decode → session_id → Redis.get(session:id)
+  None? → 401 &quot;Session revoked&quot;
+               │
+               ▼
+  GET /sessions → user sees all active devices
+  DELETE /sessions/{id} → revoke one device
+  DELETE /sessions → revoke all (logout everywhere)
+</code></pre>
+<h3 id="83-payment-end-to-end-flow">8.3 Payment End-to-End Flow</h3>
+<pre><code>User sends ₹X to VPA or account number
+              │
+              ▼ POST /payments/initiate
+  ┌───────────────────────────────────────┐
+  │ require_kyc → must be KYC-verified    │
+  │ Source account belongs to user?       │
+  │ Balance ≥ amount?                     │
+  │ Mode: UPI (VPA) or Account transfer   │
+  └────────────┬──────────────────────────┘
+               │
+               ▼ Generate 6-digit OTP → Redis 5 min
+  ┌────────────┴──────────────────────────┐
+  │ Send SMS (Twilio)                     │
+  │ Send Email (Gmail)                    │
+  └────────────┬──────────────────────────┘
+               │
+       amount &gt; ₹1,00,000?
+               │ Yes
+               ▼
+  Firebase FCM push to Flutter
+  &quot;Large Payment Approval Required&quot;
+  User taps YES → POST /payments/{id}/respond
+
+               │
+               ▼ POST /payments/verify
+  ┌───────────────────────────────────────┐
+  │ OTP verified from Redis               │
+  │ Debit source account (MongoDB update) │
+  │ Credit destination account            │
+  │ Create debit + credit transaction docs│
+  │ Update payment status → &quot;completed&quot;   │
+  └────────────┬──────────────────────────┘
+               │
+               ▼ Parallel async:
+  • Kafka: &quot;payments.initiated&quot; → fraud ML check
+  • Email: transaction alert (fire-and-forget)
+  • In-app notification created
+  • ML fraud score stored in fraud_logs
+</code></pre>
+<h3 id="84-compliance-ai-voice-call-flow">8.4 Compliance AI Voice Call Flow</h3>
+<pre><code>Employee calls PSB compliance hotline (Twilio number)
+              │
+              ▼ Twilio → POST /compliance/call/inbound
+  ┌──────────────────────────────────────┐
+  │ TwiML: &quot;Welcome to PSB compliance.   │
+  │  Ask your question after the beep.&quot;  │
+  │ Record: max 30s, action=/call/process│
+  └────────────┬─────────────────────────┘
+               │ Employee speaks
+               ▼ POST /compliance/call/process
+  ┌──────────────────────────────────────┐
+  │ Download recording → Deepgram STT    │
+  │ Detect language (EN/HI/PA)           │
+  │ Confidence &lt; 0.65? → ask to repeat   │
+  └────────────┬─────────────────────────┘
+               │
+               ▼ Hybrid RAG retrieval
+  ┌──────────────────────────────────────┐
+  │ FAISS (MiniLM-L6-v2) + BM25 → top-5 │
+  │ RRF score fusion                     │
+  │ Rule-based compliance check          │
+  │ Groq LLaMA-3 70B generation          │
+  └────────────┬─────────────────────────┘
+               │
+               ▼ Sarvam translate (if non-English)
+  ┌──────────────────────────────────────┐
+  │ TwiML: speak answer (Polly.Aditi)    │
+  │ &quot;Would you like another question?&quot;   │
+  │ Gather keypress → /call/continue     │
+  └────────────┬─────────────────────────┘
+               │
+  ┌────────────┴─────────────┐
+  │ Press 1: redirect        │ Press other: hangup
+  │ → /call/inbound again    │
+  └──────────────────────────┘
+               │
+  Audit JSONL: query_masked, answer_preview,
+               compliance_status, triggered_rules,
+               latency_ms, language
+</code></pre>
+<h3 id="85-sentinel-simulation-flow">8.5 Sentinel Simulation Flow</h3>
+<pre><code>SuperAdmin selects employee + module type
+              │
+              ▼ POST /admin/sim/campaigns/single
+  ┌──────────────────────────────────────┐
+  │ Pick template (phishing/SE/drill)    │
+  │ Create simulation_assignment in DB   │
+  │ Kafka: &quot;simulation.email.deliver&quot;    │
+  └────────────┬─────────────────────────┘
+               │ Event consumer delivers
+               ▼
+  Spoofed email arrives in employee's inbox
+  (visible in /portal/inbox AND real email)
+               │
+       ┌───────┴──────────────────────────┐
+       │                                  │
+  Employee clicks               Employee reports
+  phishing link                 → POST /portal/inbox/{id}/report
+       │                                  │
+       ▼                                  ▼
+  GET /portal/phishing/click/{token}   attempt.passed = true
+  Real-time: POST /api/track/behavior  Score improved
+       │
+       ▼
+  Phishing landing page
+  (fake PSB credentials page)
+       │
+       ▼ POST /portal/phishing/credentials/{token}
+  Credential harvested → attempt.passed = false
+  Risk score increased
+  Flagged in employee profile
+
+  SuperAdmin views:
+  • /admin/sim/stats/overview    — real-time stats
+  • /admin/sim/reports/flagged   — high-risk employees
+  • /admin/sim/reports/leaderboard — security rankings
+  • /admin/sim/reports/posture   — org-wide posture
+</code></pre>
+<hr />
+<h2 id="9-ml-ai-pipeline">9. ML / AI Pipeline</h2>
+<p>The ML microservice runs separately and exposes a gRPC server. WealthVault connects via <code>MLClient</code> in <code>app/services/grpc_client.py</code>. Bearer token auth is injected on every call via <code>_BearerTokenInterceptor</code>.</p>
+<h3 id="ml-models">ML Models</h3>
+<table>
+<thead>
+<tr>
+<th>Model ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>gRPC Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M1</td>
+<td>Random Forest + TF-IDF</td>
+<td>Transaction category classification by merchant + channel</td>
+<td><code>PredictTransactionCategory</code></td>
+</tr>
+<tr>
+<td>M2</td>
+<td>BERT multilingual</td>
+<td>Free-text transaction classification with confidence</td>
+<td><code>ClassifyTransactionMultilingual</code></td>
+</tr>
+<tr>
+<td>M3</td>
+<td>BERT fine-tuned</td>
+<td>Coercion / stress detection in chat messages</td>
+<td><code>DetectChatStress</code></td>
+</tr>
+<tr>
+<td>Cashflow</td>
+<td>ARIMA / Random Forest</td>
+<td>Predict daily net cashflow for N days</td>
+<td><code>ForecastCashflow</code></td>
+</tr>
+<tr>
+<td>BehaviorAnomaly</td>
+<td>Isolation Forest + per-user SVM</td>
+<td>Detect unusual login/behavior patterns</td>
+<td><code>DetectBehaviorAnomaly</code></td>
+</tr>
+<tr>
+<td>M4 (RiskMLP)</td>
+<td>Dual-head MLP</td>
+<td>Financial risk score from feature vector</td>
+<td><code>CalculateRiskScore</code></td>
+</tr>
+<tr>
+<td>SeqAnomaly</td>
+<td>LSTM Autoencoder</td>
+<td>Detect anomalous transaction sequences (reconstruction error)</td>
+<td><code>DetectSequenceAnomaly</code></td>
+</tr>
+<tr>
+<td>InsiderThreat</td>
+<td>GraphSAGE GNN</td>
+<td>Graph-based insider threat detection on user-merchant edges</td>
+<td><code>DetectInsiderThreat</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="grpc-proto-mlproto">gRPC Proto (<code>ml.proto</code>)</h3>
+<p>Defines 8 RPC methods. Generated stubs in <code>app/shared/proto/ml_pb2.py</code> and <code>ml_pb2_grpc.py</code>. The <code>MLClient</code> class wraps each stub call with type-safe Python methods.</p>
+<h3 id="http-fallback">HTTP Fallback</h3>
+<p>If <code>USING_GRPC=false</code>, <code>ml_http.py</code> routes all ML calls to the ML server's REST API at <code>ML_HTTP_HOST</code> using <code>Authorization: Bearer {ML_API_TOKEN}</code>.</p>
+<h3 id="homomorphic-encryption-simulation-chatbot">Homomorphic Encryption Simulation (Chatbot)</h3>
+<p>Financial amounts are encoded as <code>HE_CT_{int(value*8191)}</code> tokens before being included in the LLM context window. The LLM receives and returns opaque tokens. <code>decode_llm_response()</code> decrypts them back to <code>₹{amount}</code> format before returning to the user — simulating homomorphic encryption for secure LLM context passing.</p>
+<hr />
+<h2 id="10-compliance-ai-rag">10. Compliance AI (RAG)</h2>
+<p>The compliance AI runs as a <strong>separate FastAPI service</strong> on port 8002 to isolate its heavy ML dependencies (FAISS, sentence-transformers) and different rate limits from the main banking API.</p>
+<h3 id="rag-pipeline">RAG Pipeline</h3>
+<pre><code>Documents ingested at startup (ingestion.py):
+  RBI KYC Master Directions (PDF)
+  PSB internal policy documents
+        │
+        ▼ pdfplumber + pypdf → text chunks
+  CHUNK_SIZE=700 tokens, CHUNK_OVERLAP=100 tokens
+        │
+        ▼ all-MiniLM-L6-v2 embeddings
+  FAISS index + BM25 index → saved to ./data/faiss_index
+
+Query time (rag_pipeline.py):
+  User query
+     │
+     ▼ HybridRetriever
+  FAISS: cosine similarity search → top-K=5 semantic chunks
+  BM25:  BM25Okapi keyword search → top-K=5 lexical chunks
+  RRF:   Reciprocal Rank Fusion → deduplicated final context
+     │
+     ▼ Groq LLaMA-3 70B (llama3-70b-8192)
+  System: &quot;Answer ONLY from context. Cite source. No hallucination.&quot;
+  User: REGULATORY CONTEXT: {chunks}\n\nUSER QUERY: {query}
+     │
+     ▼ compliance_checker.py
+  Pattern-match compliance rules on query text
+  Output: Compliant / Risky / Non-Compliant + triggered_rules[]
+     │
+     ▼ audit_logger.py
+  JSONL: query_masked, answer_preview, compliance_status,
+         triggered_rules, confidence, latency_ms
+</code></pre>
+<h3 id="compliance-rules-implemented">Compliance Rules Implemented</h3>
+<ul>
+<li>KYC periodic update: 2 years (high risk), 8 years (medium risk), 10 years (low risk) — RBI KYC Master Directions Para 38</li>
+<li>Generic KYC interval checks</li>
+<li>AML customer due diligence thresholds</li>
+<li>CTR (Cash Transaction Report) requirements</li>
+<li>STR (Suspicious Transaction Report) triggers</li>
+<li>PMLA obligations</li>
+</ul>
+<hr />
+<h2 id="11-sentinel-simulation-lab">11. Sentinel Simulation Lab</h2>
+<p>Sentinel is a built-in security awareness training system for PSB employees. It creates realistic phishing and social engineering simulations within the platform itself.</p>
+<h3 id="simulation-modules">Simulation Modules</h3>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Attack Type</th>
+<th>How It Works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phishing</strong></td>
+<td>Email phishing</td>
+<td>Spoofed internal PSB email with malicious link to fake credential page</td>
+</tr>
+<tr>
+<td><strong>Social Engineering</strong></td>
+<td>Pretexting</td>
+<td>Fake urgent authority email requiring information disclosure</td>
+</tr>
+<tr>
+<td><strong>Incident Drill</strong></td>
+<td>Awareness training</td>
+<td>Fake security incident requiring employee response</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scoring-algorithm">Scoring Algorithm</h3>
+<p>Each attempt is scored based on:<br />
+- Did the employee click the link? (negative)<br />
+- Did the employee submit credentials? (critical negative)<br />
+- Did the employee report the email? (positive)<br />
+- Time-to-report (faster = better)<br />
+- Read time vs. click rate ratio</p>
+<p>Scores accumulate into an <code>employee_simulation_profile</code> with certification status, risk tier, and flag status.</p>
+<hr />
+<h2 id="12-deployment-guide">12. Deployment Guide</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>20.x+</td>
+</tr>
+<tr>
+<td>Docker Compose</td>
+<td>2.x+</td>
+</tr>
+<tr>
+<td>MongoDB</td>
+<td>Atlas URI or local 7.x</td>
+</tr>
+<tr>
+<td>ML Server</td>
+<td>Running separately with gRPC on port 50051</td>
+</tr>
+<tr>
+<td>Firebase</td>
+<td>Project with FCM enabled, service account JSON</td>
+</tr>
+</tbody>
+</table>
+<h3 id="service-map">Service Map</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Image</th>
+<th>Port</th>
+<th>Health Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>backend_app</code></td>
+<td>Custom (Dockerfile.app)</td>
+<td>8000</td>
+<td><code>GET /docs</code></td>
+</tr>
+<tr>
+<td><code>backend_compliance_app</code></td>
+<td>Custom (Dockerfile.compliance_app)</td>
+<td>8002</td>
+<td><code>GET /docs</code></td>
+</tr>
+<tr>
+<td><code>frontend</code></td>
+<td>Custom (Dockerfile)</td>
+<td>5173</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td>redis/redis-stack</td>
+<td>6379 / 8001</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>kafka</code></td>
+<td>obsidiandynamics/kafka</td>
+<td>9092</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>kafdrop</code></td>
+<td>obsidiandynamics/kafdrop</td>
+<td>9000</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quick-start">Quick Start</h3>
+<pre><code class="language-bash"># 1. Configure environment
+cp backend/.env.sample backend/.env
+# Edit backend/.env with your credentials (see Section 14)
+
+cp frontend/.env.sample frontend/.env
+
+# 2. Build and start all services
+docker compose up --build -d
+
+# 3. Check health
+curl http://localhost:8000/health
+# Expected: {&quot;status&quot;:&quot;healthy&quot;,&quot;service&quot;:&quot;WealthVault&quot;}
+
+# 4. View API docs
+open http://localhost:8000/docs
+open http://localhost:8000/redoc
+
+# 5. Kafka UI
+open http://localhost:9000
+
+# 6. Redis UI
+open http://localhost:8001
+</code></pre>
+<h3 id="database-seeding">Database Seeding</h3>
+<p>The <code>backend_app</code> container automatically runs <code>python -m app.seed</code> on startup. This creates:<br />
+- Demo users (customer, employee, RM, admin, super_admin roles)<br />
+- Sample accounts with balances<br />
+- Sample transactions, investments, loans<br />
+- KYC mock data<br />
+- Employee profiles for Sentinel</p>
+<h3 id="named-volumes">Named Volumes</h3>
+<pre><code class="language-yaml">volumes:
+  model_data:    # Shared ML model storage between backend_app and compliance_app
+</code></pre>
+<hr />
+<h2 id="13-development-timeline-marjun-2026">13. Development Timeline (Mar–Jun 2026)</h2>
+<h3 id="phase-1-genesis-mar-6">Phase 1: Genesis (Mar 6)</h3>
+<p><strong>Week of Mar 6</strong><br />
+- <code>Mar 6</code> — Initial commit: project scaffolding, FastAPI skeleton, React Vite frontend initialized</p>
+<hr />
+<h3 id="phase-2-foundation-apr-1418">Phase 2: Foundation (Apr 14–18)</h3>
+<p><strong>Week of Apr 14–18</strong><br />
+- <code>Apr 14</code> — Backend URL config, proxy setup for Vite dev server, CORS configuration, logifyx v1.0.4–v1.0.5 integration<br />
+- <code>Apr 18</code> — SIPs page; email notifications (welcome + payment alerts); SMS OTP via Twilio; full initial backend setup; What-If financial scenario engine</p>
+<hr />
+<h3 id="phase-3-security-hardening-core-features-apr-1922">Phase 3: Security Hardening + Core Features (Apr 19–22)</h3>
+<p><strong>Apr 19</strong><br />
+- AES-256-GCM field-level encryption for all sensitive user and account fields<br />
+- Encrypted data handling in models and route handlers</p>
+<p><strong>Apr 20</strong><br />
+- Cloudflare Turnstile CAPTCHA on register and login<br />
+- KYC approval flows for admin, employee, and relationship manager roles<br />
+- New device detection + IP geolocation lookup<br />
+- Behavior anomaly ML integration with email alert on suspicious login<br />
+- Fraud alert email template<br />
+- Risk scoring logic<br />
+- Three alert management endpoints (<code>/notifications/alerts</code>)<br />
+- Counting Bloom Filter implementation</p>
+<p><strong>Apr 21</strong><br />
+- Password reset with OTP flow<br />
+- Recovery email and phone with OTP verification<br />
+- Session management with Redis (all active sessions per user)<br />
+- JWT session_id claim for per-session revocation<br />
+- Account Aggregator (AA) framework for external bank linking<br />
+- Asset Vault with net worth computation<br />
+- Budget manager with per-category alerts<br />
+- Indian phone number validation (regex, Pydantic validator)<br />
+- Voice navigation + screen reader accessibility on hover<br />
+- Forgot password UI + backend flow<br />
+- Insider threat scan route for admin<br />
+- Behavioral anomaly detection with email alert on anomalous logins</p>
+<p><strong>Apr 22</strong><br />
+- UPI QR code generation<br />
+- Tax optimization summary route<br />
+- Credit score computation route<br />
+- Compliance AI Assistant with Twilio voice integration and TwiML endpoints<br />
+- Redis caching decorator (<code>cache_response</code>) + performance metrics endpoint (20-min Redis sorted set)<br />
+- Docker Compose multi-service setup with health checks and restart policies<br />
+- <code>.dockerignore</code> for both backend and frontend<br />
+- Kafka migration from <code>kafka-python</code> to <code>aiokafka</code> for async support<br />
+- Internationalization (i18n) with translation files (EN, HI, PA)<br />
+- Risk summary endpoint<br />
+- Unified notifications endpoint combining alerts and notifications<br />
+- SHA-256 index deduplication fix (drop-then-recreate unique indexes)<br />
+- Bank statement download in transactions<br />
+- Market news integration (Finnhub + NewsAPI)<br />
+- Glossary/PageInfoButton component for onboarding<br />
+- Data privacy centre page<br />
+- What-If calculator with AI-simulated scenarios<br />
+- Role-protected routes in frontend<br />
+- Notification bell in header</p>
+<hr />
+<h3 id="phase-4-polish-reliability-apr-23-may-4">Phase 4: Polish + Reliability (Apr 23 – May 4)</h3>
+<p><strong>Apr 23–25</strong><br />
+- Payment validation improvements and error handling<br />
+- Footer component<br />
+- UPI QR extension with payment mode detection<br />
+- PageLoader component across all pages<br />
+- Email delivery and first-time investor tips bug fixes</p>
+<p><strong>Apr 28</strong><br />
+- Migrated to <code>aioredis</code> for full async Redis (replaces sync client)<br />
+- OS-specific version detection in device service (Windows 10/11, macOS 11+)<br />
+- Kafka OTP verification event flow (email OTP now dispatched via Kafka)<br />
+- Navigation tutorial for new users + first-time investor popup</p>
+<p><strong>May 2</strong><br />
+- Auth cookie path fixed to <code>/</code> root (refresh endpoint was inaccessible)</p>
+<p><strong>May 4</strong><br />
+- Fire-and-forget email sending via <code>asyncio.create_task</code> (welcome, fraud alert, transaction alert)<br />
+- Token retrieval priority: Authorization header first, httpOnly cookie fallback</p>
+<hr />
+<h3 id="phase-5-ai-compliance-expansion-may-2325">Phase 5: AI &amp; Compliance Expansion (May 23–25)</h3>
+<p><strong>May 23</strong><br />
+- CycloneDX SBOM + CBOM generation integrated<br />
+- Additional security dependencies</p>
+<p><strong>May 24</strong><br />
+- Smart investment goal insights with NewsAPI integration<br />
+- Logout UX fix (clears Authorization header state)<br />
+- ML service behavior model retraining endpoint<br />
+- Biometric data handling in session service<br />
+- Security system + integration documentation in <code>/docs</code></p>
+<p><strong>May 25</strong><br />
+- Credit score computation with 300–900 range and inertia algorithm (score evolves 35% toward target each compute)<br />
+- Account creation/linking with account number and balance field updates<br />
+- KYC OCR using Tesseract + OpenCV with Gaussian blur and Otsu thresholding<br />
+- Google GenAI client integration as primary KYC extraction path<br />
+- Verhoeff algorithm checksum validation on Aadhaar numbers<br />
+- KYC status fallback logic for user profile edge cases</p>
+<hr />
+<h3 id="phase-6-sentinel-simulation-lab-may-2629">Phase 6: Sentinel Simulation Lab (May 26–29)</h3>
+<p><strong>May 26</strong><br />
+- Fraud simulation module added to project structure</p>
+<p><strong>May 27</strong><br />
+- Simulation email delivery system<br />
+- Campaign cancellation endpoint<br />
+- Module path reorganization (<code>sys.path</code> fixes)<br />
+- <code>dotenv</code> loading simplification<br />
+- Mock admin dashboard with simulation analytics<br />
+- Sentinel plugin additions (frontend + backend)</p>
+<p><strong>May 28</strong><br />
+- Fully functional Sentinel simulation setup for <code>super_admin</code> role<br />
+- Mail simulation updates and templates<br />
+- Phishing harvest + social engineering pages built<br />
+- <code>super_admin</code> role recognition in sidebar<br />
+- Persistent auth state implementation<br />
+- Sentinel plugin backend and frontend integration<br />
+- Simulation lab documentation (API references, subsystem overview, data models)</p>
+<p><strong>May 29</strong><br />
+- Enhanced simulation campaign logic (random targeting, bulk targeting)<br />
+- Dynamic notification handling in Reveal pages<br />
+- Employee debrief (Reveal) page and Learn page added<br />
+- Task pages with real-time behavioral tracking<br />
+- InboxDetail navigation improvements<br />
+- <code>AdminNotifications</code> component for real-time employee alerts<br />
+- Simulation seed execution changed to manual trigger<br />
+- <code>NotificationBell</code> and <code>AdminNotifications</code> refactored to static data fallback</p>
+<hr />
+<h3 id="phase-7-ml-integration-firebase-jun-14">Phase 7: ML Integration + Firebase (Jun 1–4)</h3>
+<p><strong>Jun 1</strong><br />
+- Navigation button UX: close reveal before redirect</p>
+<p><strong>Jun 3</strong><br />
+- New gRPC ML methods: <code>DetectSequenceAnomaly</code>, <code>DetectInsiderThreat</code>, <code>CalculateRiskScore</code>, <code>DetectBehaviorAnomaly</code><br />
+- Architecture documentation update (<code>docs/architecture.md</code>)<br />
+- gRPC channel: auto-select secure vs insecure based on host scheme (<code>https://</code> vs <code>http://</code> vs plain <code>host:port</code>)<br />
+- <code>ML_GRPC_HOST</code> environment variable for dynamic ML server targeting<br />
+- HTTP fallback ML client (<code>ml_http.py</code>) for environments without gRPC<br />
+- HTTP ML router (<code>app/routes/ml_http.py</code>) with same interface as gRPC router<br />
+- Removed unused <code>m2_predict</code> endpoint<br />
+- Code readability refactoring pass</p>
+<p><strong>Jun 4</strong><br />
+- Firebase FCM push notifications for large payment approvals (Flutter mobile app)<br />
+- <code>firebase_service.py</code> with <code>_init_firebase()</code> and <code>send_payment_approval_notification()</code><br />
+- Mock frontend URLs in <code>.env</code> config (<code>MOCK_PORTAL_BASE_URL</code>, <code>SENTINEL_BASE_URL</code>)<br />
+- Vite config update with EC2 in Docker host comments<br />
+- Portal session phishing tracking URL updated to use mock frontend base URL<br />
+- Email delivery functions updated to use <code>settings.FRONTEND_URL</code><br />
+- Code structure refactoring pass</p>
+<hr />
+<h3 id="phase-8-configuration-hardening-jun-56">Phase 8: Configuration Hardening (Jun 5–6)</h3>
+<p><strong>Jun 5</strong><br />
+- Firebase configuration moved to <code>.env.sample</code> with placeholder credentials<br />
+- <code>LARGE_PAYMENT_THRESHOLD</code> added to env config (₹1,00,000 default)</p>
+<p><strong>Jun 6</strong><br />
+- Draw.io integration for architecture diagrams<br />
+- Custom flowchart skill added to <code>.claude/skills</code><br />
+- <code>docs/architecture.drawio</code> created</p>
+<hr />
+<h3 id="phase-9-ml-auth-persistence-jun-1117">Phase 9: ML Auth + Persistence (Jun 11–17)</h3>
+<p><strong>Jun 11</strong><br />
+- <code>logifyx</code> upgraded to v1.1.0<br />
+- Major code structure refactoring for readability and maintainability</p>
+<p><strong>Jun 17</strong><br />
+- Bearer token authentication interceptor added to gRPC channel (<code>_BearerTokenInterceptor</code>, <code>_AuthCallDetails</code>)<br />
+- <code>ML_API_TOKEN</code> config variable added for ML server authentication<br />
+- HTTP ML client updated to use <code>Authorization: Bearer {ML_API_TOKEN}</code> header<br />
+- <code>useUIStore</code> (frontend) refactored to include persistence and proper user preference initialization on login</p>
+<hr />
+<h2 id="14-environment-variables">14. Environment Variables</h2>
+<pre><code class="language-bash"># ── App ────────────────────────────────────────────────────────────────────
+APP_NAME=WealthVault
+APP_VERSION=1.0.0
+DEBUG=true
+
+# ── ML / gRPC ──────────────────────────────────────────────────────────────
+ML_GRPC_HOST=localhost:50051       # or https://ngrok-url for TLS tunnel
+USING_GRPC=true                    # false → use HTTP fallback
+ML_HTTP_HOST=http://localhost:8009/api/v1
+ML_API_TOKEN=&lt;bearer-token&gt;        # shared secret for ML server auth
+
+# ── Mock Frontends (Sentinel) ──────────────────────────────────────────────
+MOCK_PORTAL_BASE_URL=http://localhost:5175
+SENTINEL_BASE_URL=http://localhost:5174
+
+# ── MongoDB ────────────────────────────────────────────────────────────────
+MONGODB_URL=mongodb://localhost:27017
+MONGODB_DB_NAME=wealthvault
+
+# ── Encryption ─────────────────────────────────────────────────────────────
+DATA_ENCRYPTION_KEY=&lt;base64-encoded-32-byte-AES-key&gt;   # AES-256-GCM
+ENCRYPTION_KEY=&lt;fernet-key&gt;                            # Fernet for agents
+
+# ── Email / Gmail ──────────────────────────────────────────────────────────
+NO_REPLY_EMAIL=noreply@yourdomain.com
+MAIL_PASSWORD=&lt;gmail-app-password&gt;
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_STARTTLS=true
+MAIL_SSL_TLS=false
+GMAIL_TOKEN_B64=&lt;base64-encoded-gmail-oauth-token.pickle&gt;
+
+# ── Redis ──────────────────────────────────────────────────────────────────
+REDIS_URL=redis://localhost:6379
+
+# ── JWT ────────────────────────────────────────────────────────────────────
+JWT_SECRET_KEY=&lt;long-random-256bit-secret&gt;
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_DAYS=7
+
+# ── Groq (Compliance AI + Chatbot) ─────────────────────────────────────────
+GROQ_API_KEY=&lt;groq-api-key&gt;
+GROQ_MODEL=llama3-70b-8192
+
+# ── RAG Configuration ──────────────────────────────────────────────────────
+EMBEDDING_MODEL=all-MiniLM-L6-v2
+FAISS_INDEX_PATH=./data/faiss_index
+CHUNK_SIZE=700
+CHUNK_OVERLAP=100
+TOP_K=5
+
+# ── Voice Services ─────────────────────────────────────────────────────────
+DEEPGRAM_API_KEY=&lt;deepgram-key&gt;
+SARVAM_API_KEY=&lt;sarvam-key&gt;
+STT_CONFIDENCE_THRESHOLD=0.65
+
+# ── Rate Limiting ──────────────────────────────────────────────────────────
+RATE_LIMIT_QUERY=30/minute
+RATE_LIMIT_VOICE=10/minute
+
+# ── Kafka ──────────────────────────────────────────────────────────────────
+KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+
+# ── External Market APIs ───────────────────────────────────────────────────
+MARKETSTACK_API_KEY=&lt;key&gt;
+ALPHA_VANTAGE_API_KEY=&lt;key&gt;
+FINNHUB_API_KEY=&lt;key&gt;
+NEWS_API_KEY=&lt;key&gt;
+EXCHANGERATE_API_KEY=&lt;key&gt;
+
+# ── OTP ────────────────────────────────────────────────────────────────────
+OTP_EXPIRE_SECONDS=300
+
+# ── Firebase FCM ───────────────────────────────────────────────────────────
+FIREBASE_CREDENTIALS_PATH=./walthvault-firebase-adminsdk-*.json
+LARGE_PAYMENT_THRESHOLD=100000
+
+# ── Twilio ─────────────────────────────────────────────────────────────────
+ACCOUNT_SID=&lt;twilio-account-sid&gt;
+AUTH_TOKEN=&lt;twilio-auth-token&gt;
+TWILIO_PHONE_NUMBER=+1xxxxxxxxxx
+
+# ── Cloudflare Turnstile ───────────────────────────────────────────────────
+TURNSTILE_SECRET_KEY=&lt;cloudflare-turnstile-secret&gt;
+ENABLE_TURNSTILE=true
+
+# ── CORS / Frontend ────────────────────────────────────────────────────────
+FRONTEND_URL=http://localhost:5173,http://localhost:5174,http://localhost:3000
+</code></pre>
+<hr />
+<h2 id="15-project-structure">15. Project Structure</h2>
+<pre><code>PSB/
+├── backend/
+│   ├── app/
+│   │   ├── app.py                        # Main FastAPI app entry point
+│   │   ├── compliance_app.py             # Compliance AI FastAPI app (port 8002)
+│   │   ├── seed.py                       # Database seeder (runs at startup)
+│   │   │
+│   │   ├── core/
+│   │   │   ├── config.py                 # Pydantic-settings configuration
+│   │   │   ├── database.py               # MongoDB connection + index creation + backfill
+│   │   │   ├── redis_client.py           # Redis client + cache_response decorator
+│   │   │   ├── kafka_service.py          # Kafka producer/consumer + in-memory fallback
+│   │   │   ├── bloom_filter.py           # Counting Bloom Filter (mmh3)
+│   │   │   └── security.py               # JWT, Argon2, get_current_user, require_role
+│   │   │
+│   │   ├── models/                       # Pydantic request/response models
+│   │   │   ├── user.py, account.py, investment.py, loan.py ...
+│   │   │
+│   │   ├── routes/                       # FastAPI APIRouter files (20 routers)
+│   │   │   ├── auth.py, accounts.py, transactions.py, payments.py
+│   │   │   ├── investments.py, loans.py, ml.py, ml_http.py
+│   │   │   ├── admin.py, kyc.py, notifications.py, sessions.py
+│   │   │   ├── family.py, aa.py, assets.py, budgets.py
+│   │   │   ├── credit.py, tax.py, risk.py, agents.py
+│   │   │   ├── compliance.py, employee_notifications.py
+│   │   │
+│   │   ├── services/
+│   │   │   ├── grpc_client.py            # gRPC ML client with Bearer token interceptor
+│   │   │   ├── http_ml_client.py         # HTTP ML client fallback
+│   │   │   ├── kyc_service.py            # KYC OCR + Verhoeff + fraud detection
+│   │   │   ├── credit_score_service.py   # Credit score computation (300–900)
+│   │   │   ├── firebase_service.py       # FCM push notifications
+│   │   │   ├── email_service.py          # Gmail / SMTP transactional emails
+│   │   │   ├── sms_service.py            # Twilio SMS
+│   │   │   ├── device_service.py         # Device fingerprinting + geolocation
+│   │   │   ├── turnstile_service.py      # Cloudflare CAPTCHA verification
+│   │   │   ├── deterministic_hash.py     # SHA-256 PII hashing
+│   │   │   ├── encryption.py             # AES-256-GCM field encryption
+│   │   │   ├── event_consumers.py        # Kafka event handler registrations
+│   │   │   ├── aa_service.py             # Account Aggregator mock
+│   │   │   ├── budget_service.py         # Budget monitoring
+│   │   │   ├── rag_client.py             # RAG pipeline HTTP client
+│   │   │   └── compliance/               # Compliance AI components
+│   │   │       ├── ingestion.py          # PDF loading + chunking
+│   │   │       ├── embedding.py          # MiniLM-L6-v2 embeddings + FAISS
+│   │   │       ├── retriever.py          # HybridRetriever (FAISS + BM25 + RRF)
+│   │   │       ├── compliance_checker.py # Rule-based compliance classifier
+│   │   │       ├── rag_pipeline.py       # Groq LLaMA-3 70B generation
+│   │   │       ├── config.py             # Compliance-specific settings
+│   │   │       └── seed_data.py          # Regulatory document seeder
+│   │   │
+│   │   ├── helper/
+│   │   │   ├── audit_logger.py           # JSONL audit log with PII masking
+│   │   │   ├── encryption_utils.py       # Fernet encryption for agent payloads
+│   │   │   ├── wealth_advisor_agent.py   # Wealth Advisor LLM agent
+│   │   │   ├── wealth_teacher_agent.py   # Wealth Teacher LLM agent
+│   │   │   ├── verhoeff.py               # Aadhaar checksum algorithm
+│   │   │   ├── helpers.py                # Query normalization, voice truncation
+│   │   │   ├── language_detection.py     # EN/HI/PA language detection
+│   │   │   └── utils.py                  # AES decrypt utility, data helpers
+│   │   │
+│   │   ├── simulation/                   # Sentinel Simulation Lab
+│   │   │   ├── routes/
+│   │   │   │   ├── admin.py              # SuperAdmin campaign management
+│   │   │   │   ├── portal.py             # Employee mock portal (honeypot)
+│   │   │   │   └── sim_tracking.py       # Real-time behavior tracking
+│   │   │   ├── services/
+│   │   │   │   ├── campaign_service.py   # Email delivery + attempt tracking
+│   │   │   │   ├── scoring.py            # Pass/fail + risk score computation
+│   │   │   │   ├── scraper.py            # OSINT employee exposure scraper
+│   │   │   │   ├── report_generator.py   # Security posture reports
+│   │   │   │   ├── email_service.py      # Simulation email delivery
+│   │   │   │   └── token_service.py      # Simulation token generation
+│   │   │   ├── models/
+│   │   │   │   └── simulation.py         # Pydantic models for campaigns/attempts
+│   │   │   └── seed.py                   # Employee profile seeder
+│   │   │
+│   │   └── shared/proto/
+│   │       ├── ml.proto                  # gRPC service + message definitions
+│   │       ├── ml_pb2.py                 # Generated protobuf classes
+│   │       └── ml_pb2_grpc.py            # Generated gRPC stubs
+│   │
+│   ├── data/
+│   │   └── faiss_index                   # FAISS vector store (persisted)
+│   ├── logs/
+│   │   ├── audit.jsonl                   # Compliance AI audit log (PII-masked)
+│   │   └── wealthvault.log               # Rotating app log
+│   ├── Dockerfile.app                    # Main app container
+│   ├── Dockerfile.compliance_app         # Compliance AI container
+│   └── pyproject.toml                    # Dependencies (uv/pip)
+│
+├── frontend/
+│   └── src/
+│       ├── App.tsx                       # Root + router
+│       ├── api.ts                        # Typed API client (axios)
+│       ├── components/                   # Shared UI components
+│       ├── pages/                        # Route-level page components
+│       └── hooks/                        # Custom React hooks
+│
+├── docker-compose.yml                    # Full stack orchestration
+└── docs/
+    ├── architecture.md                   # Architecture deep-dive
+    ├── architecture.drawio               # Draw.io architecture diagram
+    ├── api_documentation.md              # Full API reference
+    ├── security_system.md                # Security system documentation
+    ├── deployment_guide.md               # Deployment instructions
+    └── features.md                       # Feature specifications
+</code></pre>
+<hr />
+<p><em>WealthVault — Built with security, scale, and simplicity in mind for PSB Hackathon 2026.</em></p>
+<p><em>Team: Madhur Prakash + Saisha Goel</em></p>
+</body>
+</html>

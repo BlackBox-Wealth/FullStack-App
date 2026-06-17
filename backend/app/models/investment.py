@@ -66,6 +66,7 @@ class FinancialGoalCreate(BaseModel):
     target_amount: float = Field(..., gt=0)
     current_amount: float = Field(default=0, ge=0)
     deadline: str
+    funding_channels: List[str] = Field(default_factory=list)
 
 
 # Alias for backward compatibility
@@ -81,6 +82,7 @@ class FinancialGoalResponse(BaseModel):
     progress_pct: float
     deadline: str
     status: str
+    funding_channels: List[str] = []
     created_at: Optional[str] = None
 
 

@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package ml;
+
+service MLService {
+
+  // M1: RF + TF-IDF transaction category classifier
+  rpc PredictTransactionCategory(PredictCategoryRequest) returns (PredictCategoryResponse);
+
+  // M2: BERT multilingual transaction text classifier
+  rpc ClassifyTransactionMultilingual(ClassifyRequest) returns (ClassifyResponse);
+
+  // M3: BERT-based chat stress / coercion detector
+  rpc DetectChatStress(StressRequest) returns (StressResponse);
+
+  // RF cashflow forecasting (arima_<account>.pkl = RandomForestRegressor)
+  rpc ForecastCashflow(ForecastRequest) returns (ForecastResponse);
+
+  // Isolation Forest (global + per-user SVM) behavioral anomaly detector
+  rpc DetectBehaviorAnomaly(BehaviorAnomalyRequest) returns (BehaviorAnomalyResponse);
+
+  // M4: dual-head RiskMLP coercion risk scorer
+  rpc CalculateRiskScore(RiskScoreRequest) returns (RiskScoreResponse);
+
+  // LSTM autoencoder transaction sequence anomaly detector
+  rpc DetectSequenceAnomaly(SequenceAnomalyRequest) returns (SequenceAnomalyResponse);
+
+  // GraphSAGE insider threat detector (employee-account collusion graph)
+  rpc DetectInsiderThreat(InsiderThreatRequest) returns (InsiderThreatResponse);
+}
+
+// ---- M1 ----
+message PredictCategoryRequest {
+  string merchant = 1;
+  string channel = 2;
+}
+message PredictCategoryResponse {
+  string category = 1;
+}
+
+// ---- M2 ----
+message ClassifyRequest {
+  string text = 1;
+}
+message ClassifyResponse {
+  string category = 1;
+  float confidence = 2;
+}
+
+// ---- M3 ----
+message StressRequest {
+  string text = 1;
+}
+message StressResponse {
+  int32 stress_level = 1;
+  int32 risk_points = 2;
+}
+
+// ---- RF Cashflow Forecasting ----
+message ForecastRequest {
+  string account_id = 1;
+  int32 days = 2;
+}
+message ForecastItem {
+  string date = 1;
+  double amount = 2;
+}
+message ForecastResponse {
+  repeated ForecastItem forecast = 1;
+  string trend_direction = 2;  // "UP" or "DOWN"
+}
+
+// ---- Isolation Forest + per-user SVM Behavior Anomaly ----
+message BehaviorAnomalyRequest {
+  string account_id = 1;
+  map<string, double> behavior_data = 2;
+}
+message BehaviorAnomalyResponse {
+  bool is_anomaly = 1;
+  double confidence = 2;
+  string risk_level = 3;
+  double score = 4;
+  double signal_5_score = 5;  // final combined score for M4 signal matrix
+}
+
+// ---- M4 RiskMLP ----
+message RiskScoreRequest {
+  repeated double features = 1;
+}
+message RiskScoreResponse {
+  double risk_score = 1;
+  string decision = 2;  // "approve" | "review" | "block"
+}
+
+// ---- LSTM Sequence Anomaly ----
+// One transaction step in the sequence (up to 30)
+message TxnStep {
+  double amount = 1;
+  int64 unix_timestamp = 2;
+  string category = 3;
+  bool is_debit = 4;
+}
+message SequenceAnomalyRequest {
+  string user_id = 1;
+  repeated TxnStep steps = 2;
+}
+message SequenceAnomalyResponse {
+  bool is_anomaly = 1;
+  double score = 2;
+  double reconstruction_error = 3;
+}
+
+// ---- GraphSAGE Insider Threat ----
+message InsiderThreatRequest {
+  string user_id = 1;
+  string merchant_id = 2;
+  float amount = 3;
+  int32 txn_count_with_merchant = 4;
+}
+message InsiderThreatResponse {
+  float threat_score = 1;
+  bool is_insider_threat = 2;
+}

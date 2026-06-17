@@ -5,7 +5,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
 from bson import ObjectId
 from app.core.database import get_database
-from app.core.security import get_current_user, require_role
+from app.core.security import get_current_user, require_role, require_kyc
 from app.helper.utils import encrypt_user_data, decrypt_user_data, encrypt_update_fields
 from app.services.deterministic_hash import generate_deterministic_hash
 from app.core.kafka_service import kafka_service
@@ -19,10 +19,6 @@ from app.models.account import (
     AccountCreate, AccountResponse, LinkExternalAccount, AccountStatus
 )
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
-
-
-def generate_account_number():
-    return "".join(random.choices(string.digits, k=12))
 
 
 def account_to_response(acc: dict) -> AccountResponse:
@@ -41,12 +37,12 @@ def account_to_response(acc: dict) -> AccountResponse:
 
 
 @router.post("/", response_model=AccountResponse, status_code=201)
-async def create_account(data: AccountCreate, current_user: dict = Depends(get_current_user)):
+async def create_account(data: AccountCreate, current_user: dict = Depends(require_kyc)):
     user_id = str(current_user["_id"])
     log.info(f"Account creation: user={user_id}, type={data.account_type}, bank={data.bank_name}")
     db = get_database()
 
-    acc_number = generate_account_number()
+    acc_number = data.account_number
     account_doc = {
         "user_id": user_id,
         "account_number": acc_number,
@@ -115,7 +111,7 @@ async def get_account(account_id: str, current_user: dict = Depends(get_current_
 
 
 @router.post("/link-external", response_model=AccountResponse, status_code=201)
-async def link_external_account(data: LinkExternalAccount, current_user: dict = Depends(get_current_user)):
+async def link_external_account(data: LinkExternalAccount, current_user: dict = Depends(require_kyc)):
     user_id = str(current_user["_id"])
     log.info(f"Linking external account: user={user_id}, bank={data.bank_name}, acc=***{data.account_number[-4:]}")
     db = get_database()
@@ -125,7 +121,7 @@ async def link_external_account(data: LinkExternalAccount, current_user: dict = 
         "account_number": data.account_number,
         "account_type": "external",
         "bank_name": data.bank_name,
-        "balance": 0,
+        "balance": data.balance,
         "currency": "INR",
         "status": "active",
         "is_external": True,
@@ -191,3 +187,34 @@ async def unfreeze_account(
         raise HTTPException(status_code=404, detail="Account not found")
     log.info(f"Account unfrozen successfully: account={account_id}")
     return {"message": "Account unfrozen successfully"}
+
+
+@router.delete("/{account_id}", status_code=204)
+async def delete_account(account_id: str, current_user: dict = Depends(get_current_user)):
+    user_id = str(current_user["_id"])
+    log.warning(f"Account deletion requested: account={account_id}, user={user_id}")
+    db = get_database()
+    
+    # Verify ownership
+    account = await db.accounts.find_one({"_id": ObjectId(account_id)})
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    
+    # Handle encrypted data if necessary, though user_id is usually plain or accessible
+    decrypted_account = decrypt_user_data(account)
+    if decrypted_account["user_id"] != user_id and current_user["role"] != "super_admin":
+        log.warning(f"Unauthorized account deletion attempt: account={account_id}, user={user_id}")
+        raise HTTPException(status_code=403, detail="Not authorized to delete this account")
+
+    result = await db.accounts.delete_one({"_id": ObjectId(account_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Account not found")
+
+    await kafka_service.publish("user.activity", {
+        "action": "account_deleted",
+        "user_id": user_id,
+        "account_id": account_id,
+    })
+
+    log.info(f"Account deleted successfully: account={account_id}")
+    return None
