@@ -5,8 +5,9 @@ Run from backend/ directory:
 """
 import asyncio
 import hashlib
+import random
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 load_dotenv()
 import os
@@ -426,6 +427,26 @@ async def seed():
             inserted_t += 1
     print(f"Templates: {inserted_t} inserted (already existing skipped)")
 
+    # --- Clean up stale simulation employee data ---
+    # Remove profiles that have no `name` (created before the name field was added),
+    # or whose employee_id_hash no longer has a corresponding user (orphaned by a
+    # prior main-seed wipe). Then remove any lingering simulation-only users so we
+    # get a consistent, named roster on every seed run.
+    SIM_ROLES = ["teller", "IT_admin", "loan_officer", "compliance_officer"]
+    sim_user_emails = {e["email"] for e in FAKE_EMPLOYEES}
+    # Delete ALL profiles for sim employees so hashes stay in sync when users are recreated
+    await db.employee_simulation_profiles.delete_many(
+        {"email": {"$in": list(sim_user_emails)}}
+    )
+    # Also catch nameless orphans not covered by the email filter
+    await db.employee_simulation_profiles.delete_many(
+        {"$or": [{"name": {"$exists": False}}, {"name": ""}]}
+    )
+    await db.users.delete_many(
+        {"email": {"$in": list(sim_user_emails)}, "role": {"$in": SIM_ROLES}}
+    )
+    print("Cleaned up stale simulation employee profiles and users")
+
     # --- Fake Employees ---
     inserted_e = 0
     patched_e = 0
@@ -469,6 +490,8 @@ async def seed():
             if not profile_exists:
                 profile = {
                     "employee_id_hash": emp_id_hash_to_use,
+                    "name": emp["name"],
+                    "email": emp["email"],
                     "department": emp["department"],
                     "role": emp["role"],
                     "certification_status": "needs_training",
@@ -491,6 +514,74 @@ async def seed():
                 patched_e += 1
 
     print(f"Fake employees: {inserted_e} inserted, {patched_e} profiles backfilled")
+
+    # --- Sample simulation scores & attempts (for reports) ---
+    random.seed(42)
+    DEPT_AVG = {
+        "Compliance":     (86, 4),
+        "Loans":          (76, 6),
+        "Retail Banking": (67, 8),
+        "IT":             (55, 15),
+        "Operations":     (58, 10),
+    }
+
+    def _cert(s):
+        if s >= 80: return "certified"
+        if s >= 65: return "trained"
+        if s >= 50: return "aware"
+        return "needs_training"
+
+    all_profiles = []
+    async for p in db.employee_simulation_profiles.find({}):
+        all_profiles.append(p)
+
+    now = datetime.utcnow()
+    attempts_to_insert = []
+    MODULES = ["phishing", "social_eng", "incident_drill"]
+
+    for p in all_profiles:
+        dept = p.get("department", "IT")
+        mu, sigma = DEPT_AVG.get(dept, (58, 10))
+        is_flagged = p.get("name") == "Vikram Nair"
+        n = random.randint(2, 4)
+        scores = []
+        for _ in range(n):
+            raw = int(random.gauss(mu, sigma)) if not is_flagged else random.randint(20, 42)
+            scores.append(max(0, min(100, raw)))
+        avg = round(sum(scores) / len(scores), 1)
+        pam = round(max(0.1, (avg / 100) * 0.5), 2) if is_flagged else round(min(0.95, 0.3 + (avg / 100) * 0.65), 2)
+        await db.employee_simulation_profiles.update_one(
+            {"_id": p["_id"]},
+            {"$set": {
+                "average_score": avg,
+                "total_attempts": n,
+                "certification_status": _cert(avg),
+                "pam_trust_score": pam,
+                "flagged": is_flagged,
+                "flag_reason": "Submitted credentials in phishing simulation" if is_flagged else None,
+                "last_simulation": (now - timedelta(days=random.randint(1, 14))).isoformat(),
+                "_all_scores": scores,
+            }}
+        )
+        for i, score in enumerate(scores):
+            assigned_at = now - timedelta(days=random.randint(1, 30))
+            completed_at = assigned_at + timedelta(minutes=random.randint(5, 45))
+            attempts_to_insert.append({
+                "attempt_id": str(uuid.uuid4()),
+                "employee_id_hash": p["employee_id_hash"],
+                "assignment_id": str(uuid.uuid4()),
+                "module": MODULES[i % len(MODULES)],
+                "department": dept,
+                "score": score,
+                "passed": score >= 60,
+                "assigned_at": assigned_at.isoformat(),
+                "completed_at": completed_at.isoformat(),
+            })
+
+    await db.simulation_attempts.delete_many({})
+    if attempts_to_insert:
+        await db.simulation_attempts.insert_many(attempts_to_insert)
+    print(f"Sample data: {len(all_profiles)} profiles scored, {len(attempts_to_insert)} attempts seeded")
 
     # --- Super Admin ---
     admin_id = "ADMIN-001"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { fetchPortalSession } from '../api';
 import { usePhishingStore } from '../store';
@@ -6,34 +6,57 @@ import { startTracker, track } from '../tracker';
 
 type Phase = 'loading' | 'error';
 
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1500;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 const Entry: React.FC = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
   const navigate = useNavigate();
-  const { setSession } = usePhishingStore();
+  const { setSession, jwt: existingJwt } = usePhishingStore();
   const [phase, setPhase] = useState<Phase>('loading');
   const [errorMsg, setErrorMsg] = useState('');
 
-  useEffect(() => {
+  const loadSession = useCallback(async () => {
+    setPhase('loading');
+    setErrorMsg('');
+
     if (!token) {
+      // If there's already an active session, just go to the dashboard
+      if (existingJwt) {
+        navigate('/dashboard', { replace: true });
+        return;
+      }
       setErrorMsg('No session token found. This link may be invalid or expired.');
       setPhase('error');
       return;
     }
 
-    fetchPortalSession(token)
-      .then(({ jwt, user, context }) => {
+    let lastErr: Error | null = null;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        const { jwt, user, context } = await fetchPortalSession(token);
         setSession(jwt, user, context);
         startTracker();
         track('session_started', { token_present: true });
         navigate('/dashboard', { replace: true });
-      })
-      .catch((err) => {
-        const msg = err?.response?.data?.detail || 'Unable to start session. This link may be expired.';
-        setErrorMsg(msg);
-        setPhase('error');
-      });
-  }, [token]);
+        return;
+      } catch (err) {
+        lastErr = err as Error;
+        if (attempt < MAX_RETRIES - 1) await sleep(RETRY_DELAY_MS);
+      }
+    }
+
+    const msg = (lastErr as any)?.response?.data?.detail || 'Unable to start session. Please try again or contact your administrator.';
+    setErrorMsg(msg);
+    setPhase('error');
+  }, [token, existingJwt]);
+
+  useEffect(() => {
+    loadSession();
+  }, [loadSession]);
 
   if (phase === 'error') {
     return (
@@ -64,6 +87,15 @@ const Entry: React.FC = () => {
           <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6 }}>
             {errorMsg}
           </p>
+          {token && (
+            <button
+              className="btn btn-primary"
+              style={{ marginTop: 20, width: '100%' }}
+              onClick={loadSession}
+            >
+              Try Again
+            </button>
+          )}
         </div>
       </div>
     );

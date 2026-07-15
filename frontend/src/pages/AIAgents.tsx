@@ -209,7 +209,12 @@ const AIAgents: React.FC = () => {
           {/* Advice Output Section */}
           <div className="card">
             <div className="card-header">
-              <h3 className="card-title">AI Advisor Response</h3>
+              <div>
+                <h3 className="card-title">AI Advisor Response</h3>
+                <p style={{ fontSize: '0.75rem', color: 'var(--warning)', background: 'var(--warning-bg)', border: '1px solid var(--warning)', borderRadius: 6, padding: '4px 10px', margin: '6px 0 0', display: 'inline-block', fontWeight: 500 }}>
+                  Disclaimer: This is an AI adviser that gives personalised financial advice. It won't give definite answers (yes/no) — invest at your own risk.
+                </p>
+              </div>
             </div>
 
             {advice ? (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, ShieldCheck, ShieldAlert, FileSearch, RefreshCw, Mail, Star, Archive, Search } from 'lucide-react';
-import { type FakeEmail } from '../api';
+import { type FakeEmail, fetchInbox } from '../api';
 import { usePhishingStore } from '../store';
 import {
   trackPageEnter, trackPageLeave, trackClick, trackPhishingEmailOpened,
@@ -38,9 +38,34 @@ const AdminNotifications: React.FC = () => {
 
   useEffect(() => {
     setSummary({ kyc_pending: 4, kyc_escalated: 1, loans_pending: 7, fraud_alerts: 2, total_alerts: 14 });
-    setEmails(getFallbackEmails(context));
-    setLoading(false);
-    try { window.dispatchEvent(new CustomEvent('notificationsViewed')); } catch {};
+    const fallback = getFallbackEmails(context);
+    setEmails(fallback);
+
+    fetchInbox()
+      .then((res) => {
+        const raw: any[] = res?.data?.emails ?? res?.emails ?? [];
+        if (raw.length > 0) {
+          const mapped: FakeEmail[] = raw.map((e: any, i: number) => ({
+            id: e.email_id ?? e.id ?? String(i),
+            sender_name: e.sender_name ?? '',
+            sender_email: e.sender_email ?? '',
+            subject: e.subject ?? '',
+            preview: e.preview ?? '',
+            body_html: e.body_html ?? '',
+            timestamp: e.timestamp ?? '',
+            is_phishing: e.is_simulation === true,
+            is_read: e.read === true || e.is_read === true,
+            category: e.is_simulation ? 'security' : 'internal',
+            avatar_color: AVATAR_COLORS[i % AVATAR_COLORS.length],
+          }));
+          setEmails(mapped);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false);
+        try { window.dispatchEvent(new CustomEvent('notificationsViewed')); } catch {}
+      });
   }, []);
 
   const filtered = emails.filter(

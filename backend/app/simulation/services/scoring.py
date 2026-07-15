@@ -10,17 +10,13 @@ def score_phishing(actions: List[Dict[str, Any]], completed_at: datetime, assign
         return 0, False
 
     if "reported_phishing" in action_types:
-        clicked = "clicked_link" in action_types
-        if not clicked:
-            score = 100
-        else:
-            score = 50
-        # time bonus
+        # Reporting phishing is always the correct action — base score 90
+        score = 90
         if minutes_elapsed < 5:
             score = min(100, score + 10)
         elif minutes_elapsed < 30:
             score = min(100, score + 5)
-        return score, score >= 70
+        return score, True
 
     if "no_action" in action_types:
         return 20, False

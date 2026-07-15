@@ -286,7 +286,7 @@ const Reveal: React.FC = () => {
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', borderTop: '1px solid var(--border-color)', paddingTop: 20 }}>
           <button
             className="btn btn-primary"
-            onClick={() => { usePhishingStore.getState().closeReveal(); navigate('/dashboard'); }}
+            onClick={() => { usePhishingStore.getState().closeReveal(); window.location.href = import.meta.env.VITE_DASHBOARD_URL; }}
           >
             Return to Main Portal
             <ChevronRight size={16} />

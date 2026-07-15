@@ -13,6 +13,7 @@ from app.simulation.services.campaign_service import (
 )
 from app.simulation.services.scraper import run_scraper_and_save
 from app.core.kafka_service import kafka_service
+from app.helper.utils import decrypt_user_data
 
 _SENTINEL_ADMIN_ROLES = ("super_admin",)
 
@@ -85,17 +86,26 @@ async def list_employees(
         p.pop("history", None)
         profiles.append(p)
 
-    hashes = [p["employee_id_hash"] for p in profiles]
+    # Enrich profiles with user display info.
+    # Name/email are stored directly on the profile (set at seed time). Fall back to
+    # a users-collection join for older profiles that were created before this field existed.
+    hashes_needing_join = [p["employee_id_hash"] for p in profiles if not p.get("name")]
     user_map: dict = {}
-    async for u in db.users.find({"employee_id_hash": {"$in": hashes}}, {"employee_id_hash": 1, "full_name": 1, "name": 1, "email": 1}):
-        user_map[u["employee_id_hash"]] = {
-            "name": u.get("full_name") or u.get("name") or "",
-            "email": u.get("email", ""),
-        }
+    if hashes_needing_join:
+        async for u in db.users.find(
+            {"employee_id_hash": {"$in": hashes_needing_join}},
+            {"employee_id_hash": 1, "full_name": 1, "name": 1, "email": 1},
+        ):
+            u = decrypt_user_data(u)
+            user_map[u["employee_id_hash"]] = {
+                "name": u.get("full_name") or u.get("name") or "",
+                "email": u.get("email", ""),
+            }
     for p in profiles:
-        info = user_map.get(p["employee_id_hash"], {})
-        p["name"] = info.get("name", "")
-        p["email"] = info.get("email", "")
+        if not p.get("name"):
+            info = user_map.get(p["employee_id_hash"], {})
+            p["name"] = info.get("name", "")
+            p["email"] = info.get("email", "")
 
     return _ok({"profiles": profiles, "total": total, "page": page, "limit": limit})
 
@@ -110,6 +120,7 @@ async def get_employee_detail(employee_id_hash: str, _admin=Depends(require_role
 
     user = await db.users.find_one({"employee_id_hash": employee_id_hash}, {"full_name": 1, "name": 1, "email": 1})
     if user:
+        user = decrypt_user_data(user)
         profile["name"] = user.get("full_name") or user.get("name") or ""
         profile["email"] = user.get("email", "")
 
@@ -488,6 +499,6 @@ async def security_posture(_admin=Depends(require_role(*_SENTINEL_ADMIN_ROLES)))
     db = get_database()
     pipeline = [{"$group": {"_id": None, "avg_pam": {"$avg": "$pam_trust_score"}}}]
     result = await db.employee_simulation_profiles.aggregate(pipeline).to_list(length=1)
-    avg = round(result[0]["avg_pam"], 4) if result else 0.0
+    avg = round(result[0]["avg_pam"] or 0.0, 4) if result else 0.0
     status = "danger" if avg < 0.5 else ("warning" if avg < 0.75 else "success")
     return _ok({"pam_trust_score": avg, "status": status})

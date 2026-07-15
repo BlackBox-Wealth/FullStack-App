@@ -23,6 +23,7 @@ log = Logifyx(
 
 from app.routes import auth, accounts, transactions, payments, investments, ml, admin, loans, notifications, kyc, sessions, family, aa, assets, budgets, credit, tax, employee_notifications, risk, agents, ml_http
 from app.simulation.routes import portal as sim_portal, sim_tracking, admin as sim_admin
+from app.email_security import router as email_security_router
 
 
 @asynccontextmanager
@@ -172,7 +173,10 @@ app.include_router(sim_portal.router, prefix="/api/v1")
 app.include_router(sim_tracking.router, prefix="/api")
 app.include_router(sim_admin.router, prefix="/api/v1")
 
-log.info(f"Registered {20} API routers under /api/v1 (incl. simulation lab)")
+# Email Security
+app.include_router(email_security_router.router, prefix="/api/v1")
+
+log.info(f"Registered {21} API routers under /api/v1 (incl. simulation lab)")
 
 
 @app.get("/")

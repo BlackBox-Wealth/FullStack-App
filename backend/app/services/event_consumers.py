@@ -97,6 +97,13 @@ async def handle_simulation_email(event: dict):
 
     user = await db.users.find_one({"employee_id_hash": assignment["employee_id_hash"]})
     if not user:
+        # Fallback: find via profile email (handles stale hash after re-seed)
+        profile_doc = await db.employee_simulation_profiles.find_one(
+            {"employee_id_hash": assignment["employee_id_hash"]}
+        )
+        if profile_doc and profile_doc.get("email"):
+            user = await db.users.find_one({"email": profile_doc["email"]})
+    if not user:
         log.warning(f"Sim email: user not found for assignment {assignment_id}")
         return
 

@@ -152,7 +152,7 @@ async def deliver_social_eng_email(db, assignment: Dict, template: Dict, employe
         .replace("{{employee_name}}", employee_name)
         .replace("{{department}}", department)
     )
-    cta_url = f"{frontend_url}/sentinel/landing/social/{tracking_token}"
+    cta_url = f"{frontend_url}/phishing?token={tracking_token}"
     body_html = base_body + f"""
 <p style="text-align:center;margin:24px 0;">
   <a href="{cta_url}" style="background:#1d4ed8;color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:700;display:inline-block;">Respond to Request</a>
@@ -203,7 +203,7 @@ async def deliver_incident_drill_email(db, assignment: Dict, template: Dict, emp
         .replace("{{employee_name}}", employee_name)
         .replace("{{department}}", department)
     )
-    cta_url = f"{frontend_url}/sentinel/landing/incident/{tracking_token}"
+    cta_url = f"{frontend_url}/phishing?token={tracking_token}"
     body_html = base_body + f"""
 <p style="text-align:center;margin:24px 0;">
   <a href="{cta_url}" style="background:#dc2626;color:#fff;padding:12px 28px;border-radius:6px;text-decoration:none;font-weight:700;display:inline-block;">File Incident Report</a>

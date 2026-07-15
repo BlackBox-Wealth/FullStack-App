@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { Shield, Lock, AlertTriangle } from 'lucide-react'
 import { useAuthStore, type AuthStatus } from '../store/useAuthStore'
 import client from '../api/client'
@@ -19,6 +19,7 @@ function LoadingScreen() {
 
 function ErrorScreen({ status }: { status: Extract<AuthStatus, 'unauthorized' | 'forbidden'> }) {
   const isUnauthorized = status === 'unauthorized'
+  const navigate = useNavigate()
 
   return (
     <div className="flex items-center justify-center h-screen bg-bg-base bg-composite">
@@ -40,11 +41,20 @@ function ErrorScreen({ status }: { status: Extract<AuthStatus, 'unauthorized' | 
           </h2>
           <p className="text-sm text-text-muted leading-relaxed">
             {isUnauthorized
-              ? 'Your session has expired or you are not logged in. Please access this panel through the authorised PSB portal.'
+              ? 'Your session has expired or you are not logged in.'
               : 'This control panel requires administrator privileges. Contact your system administrator if you believe this is an error.'
             }
           </p>
         </div>
+
+        {isUnauthorized && (
+          <button
+            onClick={() => navigate('/login')}
+            className="w-full py-2.5 rounded-sm bg-danger text-white text-sm font-semibold hover:opacity-90 transition-fast"
+          >
+            Sign In
+          </button>
+        )}
 
         <div className="w-full pt-3 border-t border-border flex items-center justify-center gap-2 text-xs text-text-muted">
           <Shield size={11} />

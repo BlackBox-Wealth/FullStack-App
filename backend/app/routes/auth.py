@@ -1256,7 +1256,7 @@ class AdminLoginRequest(BaseModel):
 
 @router.post("/admin/login")
 async def admin_login(body: AdminLoginRequest):
-    ADMIN_ROLES = {"superadmin"}
+    ADMIN_ROLES = {"superadmin", "super_admin"}
     ADMIN_PIN = "000000"
 
     if body.pin != ADMIN_PIN:

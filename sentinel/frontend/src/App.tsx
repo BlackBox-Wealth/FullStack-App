@@ -26,6 +26,9 @@ import PhishingHarvestPage from './pages/sentinel/PhishingHarvestPage'
 import SocialEngPage from './pages/sentinel/SocialEngPage'
 import IncidentDrillPage from './pages/sentinel/IncidentDrillPage'
 
+// Auth
+import Login from './pages/Login'
+
 // Layouts
 import PortalLayout from './components/layout/PortalLayout'
 import AdminLayout from './components/layout/AdminLayout'
@@ -45,6 +48,9 @@ export default function App() {
         <Route path="/sentinel/landing/harvest/:type" element={<PhishingHarvestPage />} />
         <Route path="/sentinel/landing/social/:token" element={<SocialEngPage />} />
         <Route path="/sentinel/landing/incident/:token" element={<IncidentDrillPage />} />
+
+        {/* Standalone admin login — no auth required */}
+        <Route path="/login" element={<Login />} />
 
         {/* All other routes require a valid admin session via httpOnly cookie */}
         <Route element={<AuthGate />}>

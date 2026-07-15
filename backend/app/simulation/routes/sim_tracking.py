@@ -132,9 +132,8 @@ async def get_portal_session(token: str):
         expires_delta=timedelta(hours=4),
     )
 
-    # Log that the portal was accessed (also log clicked_link for scoring compatibility)
+    # Log portal access; clicked_link is only logged by the external click-tracker endpoint
     await log_action(db, attempt_id, "portal_session_started")
-    await log_action(db, attempt_id, "clicked_link")
 
     # Determine the phishing email ID for the mock inbox
     sim_email = await db.sim_inbox_emails.find_one({"attempt_id": attempt_id})
@@ -224,11 +223,16 @@ async def record_behavior_events(attempt_id: str, body: BehaviorBatchRequest):
             chosen = next((t for t in priority if t in terminal), None)
 
             if chosen:
-                # Adjust reported_phishing score: if link was already clicked, reduce score
+                # Reporting phishing is always a pass; use score_phishing for accurate time-weighted score
                 if chosen == "reported_phishing":
-                    all_actions = [a["action"] for a in attempt.get("actions", [])]
-                    clicked = "clicked_link" in all_actions or "session_started" in all_actions
-                    score, passed = (50, True) if clicked else (90, True)
+                    started_iso = attempt.get("started_at", datetime.utcnow().isoformat())
+                    started_dt = datetime.fromisoformat(started_iso)
+                    all_actions = attempt.get("actions", [])
+                    score, passed = score_phishing(
+                        all_actions + [{"action": "reported_phishing"}],
+                        datetime.utcnow(),
+                        started_dt,
+                    )
                 else:
                     score, passed = _TERMINAL_SCORES[chosen]
 

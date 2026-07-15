@@ -190,7 +190,7 @@ def build_report_email_html(report: Dict, employee_name: str, simulation_date: s
 
     score_section = sections.get("score", {})
     threat_section = sections.get("threat_analysis", {})
-    score_explanation = score_section.get("explanation", "") or _score_explanation(score)
+    score_explanation = score_section.get("explanation", "") or _score_explanation(score, passed, module)
     cert_impact_text = score_section.get("certification_impact", "") or _cert_impact(score)
     attacker_goal = threat_section.get("attacker_goal", "")
     real_world_impact = threat_section.get("real_world_impact", "")

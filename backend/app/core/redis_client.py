@@ -1,4 +1,4 @@
-import aioredis
+import redis.asyncio as aioredis
 from app.core.config import settings
 from logifyx import Logifyx
 import json
@@ -8,7 +8,7 @@ from typing import Callable
 log = Logifyx(
     name="wealthvault",
     color=True,  # Ensure colored output for console logs
-)   
+)
 
 redis_client: aioredis.Redis | None = None
 
